@@ -126,7 +126,7 @@ export const useSpaces = create<SpacesState>((set, get) => ({
     const { data: { user } } = await supabase.auth.getUser()
     if (user) {
       const { data: reacts } = await supabase.from('reactions').select('*').in('post_id', posts.map((p: any) => p.id)).eq('user_id', user.id)
-      const rmap: Record<string, Record<string, boolean>> = {}
+      const rmap: Record<string, Record<string, boolean>> = {};
       (reacts || []).forEach((r: any) => {
         if (!rmap[r.post_id]) rmap[r.post_id] = {}
         rmap[r.post_id][r.reaction_type] = true

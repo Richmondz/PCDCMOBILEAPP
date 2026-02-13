@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, ActivityIn
 import { Ionicons } from '@expo/vector-icons'
 import { supabase } from '../lib/supabase'
 import { tokens } from '../theme/tokens'
-import { PillTag } from './PillTag'
+import PillTag from './PillTag'
 
 type Props = {
   userId: string | null
@@ -67,8 +67,8 @@ export default function UserProfileModal({ userId, onClose }: Props) {
                 <View style={styles.tags}>
                   {profile.hobbies && profile.hobbies.length > 0 ? (
                     profile.hobbies.map((h: string, i: number) => (
-                      <PillTag key={i} label={h} color="blue" />
-                    ))
+                    <PillTag key={i} label={h} />
+                  ))
                   ) : (
                     <Text style={styles.value}>No hobbies listed</Text>
                   )}
