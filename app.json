@@ -27,7 +27,7 @@
       }
     },
     "web": {
-      "bundler": "metro",
+      "bundler": "webpack",
       "output": "single",
       "favicon": "./assets/icon.png",
       "name": "YouthConnect Hub",
