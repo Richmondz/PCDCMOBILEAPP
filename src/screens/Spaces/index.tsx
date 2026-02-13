@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, RefreshControl, Alert } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, RefreshControl, Alert, Platform } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AppHeader from '../../components/AppHeader'
@@ -25,13 +25,21 @@ export default function Spaces() {
   }
   
   const handleJoin = async (id: string, name: string) => {
-    Alert.alert('Join Space', `Join ${name}?`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Join', onPress: async () => {
-          await joinCohort(id)
-          setShowJoin(false)
-      }}
-    ])
+    if (Platform.OS === 'web') {
+      // Use native web confirm for reliability
+      if (window.confirm(`Join ${name}?`)) {
+        await joinCohort(id)
+        setShowJoin(false)
+      }
+    } else {
+      Alert.alert('Join Space', `Join ${name}?`, [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Join', onPress: async () => {
+            await joinCohort(id)
+            setShowJoin(false)
+        }}
+      ])
+    }
   }
 
   if (cohorts.length === 0 && !showJoin) {
