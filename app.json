@@ -49,7 +49,8 @@
       "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1cWVqb2diZ2RkbWNuaXJycWtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5MjEwNzMsImV4cCI6MjA4MTQ5NzA3M30.CJ5mLj9IJElyQcN7CbodKw2Y7riCAISboYmH-g_WFE0"
     },
     "plugins": [
-      "expo-asset"
+      "expo-asset",
+      "expo-font"
     ]
   }
 }

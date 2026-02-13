@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { Alert } from 'react-native'
 import { supabase } from '../lib/supabase'
 import * as Offline from '../lib/offline_storage'
 
@@ -64,6 +65,7 @@ export const useSpaces = create<SpacesState>((set, get) => ({
     const { error } = await supabase.from('cohort_memberships').insert({ cohort_id: cohortId, user_id: user.id })
     if (error && error.code !== '23505') { // Ignore unique violation
        console.error('Join cohort error:', error)
+       Alert.alert('Error', 'Failed to join space: ' + error.message)
     }
     
     await get().loadCohorts()
