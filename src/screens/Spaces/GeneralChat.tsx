@@ -101,6 +101,13 @@ export default function GeneralChat({ channelId }: { channelId: string }) {
       const isAuthor = item.user_id === profile?.id
       const isStaff = profile?.role === 'staff' || profile?.role === 'admin' || profile?.role === 'mentor'
       
+      console.log('Options Check:', { 
+        msgUser: item.user_id, 
+        myId: profile?.id, 
+        isAuthor, 
+        role: profile?.role 
+      })
+
       const opts: OptionItem[] = []
       
       if (isAuthor || isStaff) {
@@ -129,7 +136,7 @@ export default function GeneralChat({ channelId }: { channelId: string }) {
         })
       }
       
-      setOptionsTitle('Options')
+      setOptionsTitle(isAuthor ? 'Options (Author)' : 'Options')
       setCurrentOptions(opts)
       setOptionsVisible(true)
     }

@@ -127,6 +127,13 @@ export default function CommunityBoard({ channelId }: { channelId: string }) {
             const isAuthor = profile?.id === item.author_id
             const isStaff = profile?.role === 'staff' || profile?.role === 'mentor' || profile?.role === 'admin'
             
+            console.log('Post Options:', { 
+              authorId: item.author_id, 
+              myId: profile?.id, 
+              isAuthor, 
+              role: profile?.role 
+            })
+
             const opts: OptionItem[] = []
             
             if (isAuthor || isStaff) {
@@ -164,7 +171,7 @@ export default function CommunityBoard({ channelId }: { channelId: string }) {
               })
             }
             
-            setOptionsTitle('Post Options')
+            setOptionsTitle(isAuthor ? 'Post Options (Author)' : 'Post Options')
             setCurrentOptions(opts)
             setOptionsVisible(true)
           }}
