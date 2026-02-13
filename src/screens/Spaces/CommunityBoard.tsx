@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, FlatList, RefreshControl, Alert } from 'react-native'
+import { View, Text, StyleSheet, FlatList, RefreshControl, Alert, Platform } from 'react-native'
 import { useSpaces } from '../../store/spaces'
 import PostCard from '../../components/PostCard'
 import PostComposer from '../../components/PostComposer'
@@ -45,9 +45,15 @@ export default function CommunityBoard({ channelId }: { channelId: string }) {
         const ext = mediaUri.split('.').pop()?.toLowerCase() || 'jpg'
         const path = `posts/${user.id}/${Date.now()}.${ext}`
         
-        // Use FileSystem for reliable binary reading
-        const base64 = await FileSystem.readAsStringAsync(mediaUri, { encoding: 'base64' })
-        const arrayBuffer = decode(base64)
+        let arrayBuffer: ArrayBuffer
+        
+        if (Platform.OS === 'web') {
+          const response = await fetch(mediaUri)
+          arrayBuffer = await response.arrayBuffer()
+        } else {
+          const base64 = await FileSystem.readAsStringAsync(mediaUri, { encoding: 'base64' })
+          arrayBuffer = decode(base64)
+        }
         
         const contentType = ext === 'png' ? 'image/png' : 'image/jpeg'
         

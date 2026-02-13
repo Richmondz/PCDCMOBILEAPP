@@ -118,7 +118,7 @@ export const useSpaces = create<SpacesState>((set, get) => ({
     const authorIds = Array.from(new Set(posts.map((p: any) => p.author_id)))
     if (authorIds.length) {
       const { data: profs } = await supabase.from('profiles').select('id,nickname').in('id', authorIds)
-      const map: Record<string, { nickname: string }> = {}
+      const map: Record<string, { nickname: string }> = {};
       (profs || []).forEach((p: any) => { map[p.id] = { nickname: p.nickname } })
       set({ authors: { ...get().authors, ...map } })
     }
@@ -152,7 +152,7 @@ export const useSpaces = create<SpacesState>((set, get) => ({
     const userIds = Array.from(new Set(messages.map((m: any) => m.user_id)))
     if (userIds.length) {
       const { data: profs } = await supabase.from('profiles').select('id,nickname').in('id', userIds)
-      const map: Record<string, { nickname: string }> = {}
+      const map: Record<string, { nickname: string }> = {};
       (profs || []).forEach((p: any) => { map[p.id] = { nickname: p.nickname } })
       set({ authors: { ...get().authors, ...map } })
     }
