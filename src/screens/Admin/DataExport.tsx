@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, Alert, Platform } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AppHeader from '../../components/AppHeader'
@@ -24,16 +24,9 @@ export default function DataExport() {
       const { data: checkIns, error: err2 } = await supabase.from('check_ins').select('*, profiles(nickname)')
       if (err2) console.log('Err2', err2)
 
-      // The table name might be 'tool_usage_logs' or 'tool_usage'? Let's check schema.
-      // Based on 002_tool_usage.sql (inferred), it is likely 'tool_usage_logs'.
-      // If it fails, we will try 'tool_usage' or skip it.
       let tools = []
       const { data: toolsData, error: err3 } = await supabase.from('tool_usage_logs').select('*, profiles(nickname)')
       if (!err3) tools = toolsData || []
-      else {
-         console.log('Err3 (logs)', err3)
-         // Fallback or ignore
-      }
 
       const { data: posts, error: err4 } = await supabase.from('channel_posts').select('*, profiles(nickname), channels(name)')
       if (err4) console.log('Err4', err4)
@@ -62,7 +55,18 @@ export default function DataExport() {
         ...(posts || []).map((p: any) => `${p.created_at},${p.profiles?.nickname},${p.channels?.name},"${p.content.replace(/"/g, '""')}"`)
       ].join('\n')
 
-      // 3. Create Files
+      // 3. Handle Web vs Native
+      if (Platform.OS === 'web') {
+        // Download files directly on web
+        downloadCsv(csvUsers, 'users.csv')
+        downloadCsv(csvCheckIns, 'checkins.csv')
+        downloadCsv(csvTools, 'tools.csv')
+        downloadCsv(csvPosts, 'posts.csv')
+        Alert.alert('Download Started', 'CSV files have been downloaded.')
+        return
+      }
+
+      // 4. Create Files (Native)
       const dir = FileSystem.cacheDirectory + 'export/'
       await FileSystem.makeDirectoryAsync(dir, { intermediates: true })
       
@@ -80,7 +84,7 @@ export default function DataExport() {
         attachments.push(path)
       }
 
-      // 4. Send Email
+      // 5. Send Email
       const isAvailable = await MailComposer.isAvailableAsync()
       
       if (isAvailable) {
@@ -91,10 +95,6 @@ export default function DataExport() {
           attachments: attachments
         })
       } else {
-        // Fallback: Share the files individually or zip them (zipping requires another lib, so just share first one for now or alert)
-        // Since sharing multiple files isn't always supported, let's just share them one by one or warn.
-        // Actually, Sharing.shareAsync usually takes one file.
-        // Let's try to share the first file as a fallback or alert user.
         Alert.alert(
           'Mail Not Available', 
           'The default mail app is not configured. Do you want to save/share the files manually?',
@@ -112,6 +112,16 @@ export default function DataExport() {
     } finally {
       setLoading(false)
     }
+  }
+
+  function downloadCsv(content: string, filename: string) {
+    const blob = new Blob([content], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
   return (
