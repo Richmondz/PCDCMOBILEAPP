@@ -1,6 +1,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { View, Text, StyleSheet, FlatList, KeyboardAvoidingView, Platform, TouchableOpacity, Alert, Image } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 import { useSpaces } from '../../store/spaces'
 import { supabase } from '../../lib/supabase'
 import Composer from '../../components/Composer'
@@ -90,6 +91,39 @@ export default function GeneralChat({ channelId }: { channelId: string }) {
     // Ideally we should fetch avatars too. 
     // We can fetch profile on click anyway.
     
+    const handleOptions = () => {
+      const isAuthor = item.user_id === profile?.id
+      const isStaff = profile?.role === 'staff' || profile?.role === 'admin' || profile?.role === 'mentor'
+      
+      const options: any[] = [
+        { text: 'Cancel', style: 'cancel' }
+      ]
+      
+      if (isAuthor || isStaff) {
+        options.push({
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+             Alert.alert('Delete', 'Are you sure?', [
+               { text: 'Cancel', style: 'cancel' },
+               { text: 'Delete', style: 'destructive', onPress: () => deleteMessage(item.id) }
+             ])
+          }
+        })
+      }
+      
+      if (!isAuthor) {
+        options.push({
+          text: 'Report',
+          onPress: () => {
+             Alert.alert('Reported', 'Message flagged for review.')
+          }
+        })
+      }
+      
+      Alert.alert('Options', undefined, options)
+    }
+
     return (
       <View style={[styles.row, isMine ? styles.right : styles.left]}>
         {!isMine && (
@@ -100,27 +134,27 @@ export default function GeneralChat({ channelId }: { channelId: string }) {
           </TouchableOpacity>
         )}
         
-        <View style={{ maxWidth: '75%' }}>
+        <View style={{ maxWidth: '75%', alignItems: isMine ? 'flex-end' : 'flex-start' }}>
           {!isMine && (
             <TouchableOpacity onPress={() => setSelectedUserId(item.user_id)}>
               <Text style={styles.name}>{author?.nickname || 'User'}</Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity 
-            onLongPress={() => {
-              if (profile?.role === 'staff' || profile?.role === 'admin') {
-                Alert.alert('Admin Actions', 'Manage this message', [
-                  { text: 'Delete', style: 'destructive', onPress: () => deleteMessage(item.id) },
-                  { text: 'Cancel', style: 'cancel' }
-                ])
-              }
-            }}
-            activeOpacity={0.9}
-          >
-            <View style={[styles.bubble, isMine ? styles.mine : styles.other]}>
-              <Text style={[styles.text, isMine ? styles.textMine : styles.textOther]}>{item.content}</Text>
-            </View>
-          </TouchableOpacity>
+          
+          <View style={{ flexDirection: isMine ? 'row-reverse' : 'row', alignItems: 'center', gap: 4 }}>
+            <TouchableOpacity 
+              onLongPress={handleOptions}
+              activeOpacity={0.9}
+            >
+              <View style={[styles.bubble, isMine ? styles.mine : styles.other]}>
+                <Text style={[styles.text, isMine ? styles.textMine : styles.textOther]}>{item.content}</Text>
+              </View>
+            </TouchableOpacity>
+            
+            <TouchableOpacity onPress={handleOptions} style={{ padding: 4, opacity: 0.5 }}>
+              <Ionicons name="ellipsis-vertical" size={16} color="#6B7280" />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     )
