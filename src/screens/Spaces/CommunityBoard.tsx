@@ -80,6 +80,7 @@ export default function CommunityBoard({ channelId }: { channelId: string }) {
   }
 
   return (
+    <>
     <FlatList
       data={posts[channelId] || []}
       keyExtractor={(item) => item.id}
@@ -166,6 +167,7 @@ export default function CommunityBoard({ channelId }: { channelId: string }) {
       }
     />
     <UserProfileModal userId={selectedUserId} onClose={() => setSelectedUserId(null)} />
+    </>
   )
 }
 
