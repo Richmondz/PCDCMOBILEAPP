@@ -1,0 +1,15 @@
+node_modules/
+.expo/
+dist/
+web-build/
+.home/
+.trae/
+npm-debug.log
+yarn-error.log
+.env
+.DS_Store
+*.jks
+*.p12
+*.key
+*.mobileprovision
+*.orig.*

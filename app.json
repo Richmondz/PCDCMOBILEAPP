@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "PCDC Teen Club Connect",
+    "slug": "pcdc-teen-club-connect",
+    "version": "0.1.0",
+    "sdkVersion": "54.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0B0F17"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0B0F17"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single",
+      "favicon": "./assets/icon.png",
+      "name": "YouthConnect Hub",
+      "shortName": "YouthConnect",
+      "lang": "en",
+      "themeColor": "#0b0b0b",
+      "backgroundColor": "#0b0b0b",
+      "display": "standalone",
+      "startUrl": "/",
+      "meta": {
+        "apple": {
+          "mobileWebAppCapable": "yes",
+          "mobileWebAppStatusBarStyle": "black-translucent"
+        }
+      }
+    },
+    "extra": {
+      "SUPABASE_URL": "https://uuqejogbgddmcnirrqkn.supabase.co",
+      "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1cWVqb2diZ2RkbWNuaXJycWtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5MjEwNzMsImV4cCI6MjA4MTQ5NzA3M30.CJ5mLj9IJElyQcN7CbodKw2Y7riCAISboYmH-g_WFE0"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}
