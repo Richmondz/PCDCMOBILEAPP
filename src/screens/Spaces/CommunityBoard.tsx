@@ -8,6 +8,7 @@ import { supabase } from '../../lib/supabase'
 import { useNotifications } from '../../store/notifications'
 import { useNavigation } from '@react-navigation/native'
 import { useProfile } from '../../store/profile'
+import UserProfileModal from '../../components/UserProfileModal'
 import * as FileSystem from 'expo-file-system/legacy'
 import { decode } from 'base64-arraybuffer'
 
@@ -17,6 +18,7 @@ export default function CommunityBoard({ channelId }: { channelId: string }) {
   const { setBanner } = useNotifications()
   const nav = useNavigation<any>()
   const [refreshing, setRefreshing] = useState(false)
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
 
   useEffect(() => {
     loadPosts(channelId)
@@ -101,6 +103,7 @@ export default function CommunityBoard({ channelId }: { channelId: string }) {
           createdAt={item.created_at}
           reactions={useSpaces.getState().reactions[item.id] || {}}
           onReact={(type) => toggleReaction(item.id, type)}
+          onPressAuthor={() => setSelectedUserId(item.author_id)}
           onLongPress={() => {
             if (profile?.role === 'staff' || profile?.role === 'admin') {
                Alert.alert('Admin Actions', 'Manage this post', [
@@ -162,6 +165,7 @@ export default function CommunityBoard({ channelId }: { channelId: string }) {
         </View>
       }
     />
+    <UserProfileModal userId={selectedUserId} onClose={() => setSelectedUserId(null)} />
   )
 }
 

@@ -8,6 +8,7 @@ import { PrimaryButton } from '../../components/Buttons'
 import { tokens } from '../../theme/tokens'
 import { useNavigation } from '@react-navigation/native'
 import { useProfile } from '../../store/profile'
+import UserProfileModal from '../../components/UserProfileModal'
 
 export default function GeneralChat({ channelId }: { channelId: string }) {
   const { messages, loadMessages, loadMoreMessages, insertMessage, checkMessageCooldown, deleteMessage, authors } = useSpaces()
@@ -16,6 +17,7 @@ export default function GeneralChat({ channelId }: { channelId: string }) {
   const nav = useNavigation<any>()
   const [loading, setLoading] = useState(false)
   const [typingUsers, setTypingUsers] = useState<Record<string, string>>({})
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   const channelRef = useRef<any>(null)
   const lastTyped = useRef<number>(0)
 
@@ -91,7 +93,7 @@ export default function GeneralChat({ channelId }: { channelId: string }) {
     return (
       <View style={[styles.row, isMine ? styles.right : styles.left]}>
         {!isMine && (
-          <TouchableOpacity onPress={() => nav.navigate('Profile', { userId: item.user_id })}>
+          <TouchableOpacity onPress={() => setSelectedUserId(item.user_id)}>
             <View style={styles.avatar}>
               <Text style={styles.avatarText}>{author?.nickname?.[0]?.toUpperCase() || '?'}</Text>
             </View>
@@ -99,7 +101,11 @@ export default function GeneralChat({ channelId }: { channelId: string }) {
         )}
         
         <View style={{ maxWidth: '75%' }}>
-          {!isMine && <Text style={styles.name}>{author?.nickname || 'User'}</Text>}
+          {!isMine && (
+            <TouchableOpacity onPress={() => setSelectedUserId(item.user_id)}>
+              <Text style={styles.name}>{author?.nickname || 'User'}</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity 
             onLongPress={() => {
               if (profile?.role === 'staff' || profile?.role === 'admin') {
@@ -152,6 +158,7 @@ export default function GeneralChat({ channelId }: { channelId: string }) {
           <PrimaryButton title="Send" onPress={onSend} disabled={!text.trim()} style={{ height: 36, paddingHorizontal: 16 }} />
         </View>
       </View>
+      <UserProfileModal userId={selectedUserId} onClose={() => setSelectedUserId(null)} />
     </KeyboardAvoidingView>
   )
 }

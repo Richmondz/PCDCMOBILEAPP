@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons'
 
 const { width } = Dimensions.get('window')
 
-export default function PostCard({ author, content, mediaUrl, createdAt, reactions, onReact, onLongPress, onEscalate }: {
+export default function PostCard({ author, content, mediaUrl, createdAt, reactions, onReact, onLongPress, onEscalate, onPressAuthor }: {
   author: string
   content: string
   mediaUrl?: string
@@ -13,15 +13,18 @@ export default function PostCard({ author, content, mediaUrl, createdAt, reactio
   onReact: (type: string) => void
   onLongPress: () => void
   onEscalate?: () => void
+  onPressAuthor?: () => void
 }) {
   return (
     <TouchableOpacity style={styles.card} onLongPress={onLongPress} activeOpacity={0.95}>
       <View style={styles.header}>
-        <View style={styles.avatar}>
+        <TouchableOpacity style={styles.avatar} onPress={onPressAuthor}>
           <Text style={styles.avatarText}>{author[0]?.toUpperCase() || '?'}</Text>
-        </View>
+        </TouchableOpacity>
         <View style={styles.headerInfo}>
-          <Text style={styles.author}>{author}</Text>
+          <TouchableOpacity onPress={onPressAuthor}>
+            <Text style={styles.author}>{author}</Text>
+          </TouchableOpacity>
           <Text style={styles.time}>{new Date(createdAt).toLocaleDateString()} • {new Date(createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
         </View>
         {onEscalate ? (
