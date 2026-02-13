@@ -9,6 +9,7 @@ import { useNotifications } from '../../store/notifications'
 import { useNavigation } from '@react-navigation/native'
 import { useProfile } from '../../store/profile'
 import UserProfileModal from '../../components/UserProfileModal'
+import OptionsModal, { OptionItem } from '../../components/OptionsModal'
 import * as FileSystem from 'expo-file-system/legacy'
 import { decode } from 'base64-arraybuffer'
 
@@ -19,6 +20,11 @@ export default function CommunityBoard({ channelId }: { channelId: string }) {
   const nav = useNavigation<any>()
   const [refreshing, setRefreshing] = useState(false)
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
+  
+  // Options Modal State
+  const [optionsVisible, setOptionsVisible] = useState(false)
+  const [optionsTitle, setOptionsTitle] = useState('')
+  const [currentOptions, setCurrentOptions] = useState<OptionItem[]>([])
 
   useEffect(() => {
     loadPosts(channelId)
@@ -121,33 +127,35 @@ export default function CommunityBoard({ channelId }: { channelId: string }) {
             const isAuthor = profile?.id === item.author_id
             const isStaff = profile?.role === 'staff' || profile?.role === 'mentor' || profile?.role === 'admin'
             
-            const options: any[] = [
-              { text: 'Cancel', style: 'cancel' }
-            ]
+            const opts: OptionItem[] = []
             
             if (isAuthor || isStaff) {
-              options.push({ 
-                text: 'Delete Post', 
-                style: 'destructive', 
+              opts.push({ 
+                label: 'Delete Post', 
+                isDestructive: true, 
                 onPress: () => {
-                  Alert.alert('Delete Post', 'Are you sure?', [
-                    { text: 'Cancel', style: 'cancel' },
-                    { text: 'Delete', style: 'destructive', onPress: () => deletePost(item.id) }
-                  ])
+                  if (Platform.OS === 'web') {
+                    if (confirm('Delete this post?')) deletePost(item.id)
+                  } else {
+                    Alert.alert('Delete Post', 'Are you sure?', [
+                      { text: 'Cancel', style: 'cancel' },
+                      { text: 'Delete', style: 'destructive', onPress: () => deletePost(item.id) }
+                    ])
+                  }
                 }
               })
             }
             
             if (isStaff) {
-              options.push({
-                text: 'Escalate to Admin',
+              opts.push({
+                label: 'Escalate to Admin',
                 onPress: () => nav.navigate('EscalateForm', { type: 'post', postId: item.id })
               })
             }
             
             if (!isAuthor) {
-              options.push({
-                text: 'Report Post',
+              opts.push({
+                label: 'Report Post',
                 onPress: () => {
                   reportPost(item.id, 'inappropriate')
                   blockUser(item.author_id)
@@ -156,7 +164,9 @@ export default function CommunityBoard({ channelId }: { channelId: string }) {
               })
             }
             
-            Alert.alert('Post Options', undefined, options)
+            setOptionsTitle('Post Options')
+            setCurrentOptions(opts)
+            setOptionsVisible(true)
           }}
         />
       )}
@@ -167,6 +177,7 @@ export default function CommunityBoard({ channelId }: { channelId: string }) {
       }
     />
     <UserProfileModal userId={selectedUserId} onClose={() => setSelectedUserId(null)} />
+    <OptionsModal visible={optionsVisible} title={optionsTitle} options={currentOptions} onClose={() => setOptionsVisible(false)} />
     </>
   )
 }

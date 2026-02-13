@@ -10,6 +10,7 @@ import { tokens } from '../../theme/tokens'
 import { useNavigation } from '@react-navigation/native'
 import { useProfile } from '../../store/profile'
 import UserProfileModal from '../../components/UserProfileModal'
+import OptionsModal, { OptionItem } from '../../components/OptionsModal'
 
 export default function GeneralChat({ channelId }: { channelId: string }) {
   const { messages, loadMessages, loadMoreMessages, insertMessage, checkMessageCooldown, deleteMessage, authors } = useSpaces()
@@ -21,6 +22,11 @@ export default function GeneralChat({ channelId }: { channelId: string }) {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
   const channelRef = useRef<any>(null)
   const lastTyped = useRef<number>(0)
+
+  // Options Modal State
+  const [optionsVisible, setOptionsVisible] = useState(false)
+  const [optionsTitle, setOptionsTitle] = useState('')
+  const [currentOptions, setCurrentOptions] = useState<OptionItem[]>([])
 
   useEffect(() => {
     loadMessages(channelId)
@@ -95,33 +101,37 @@ export default function GeneralChat({ channelId }: { channelId: string }) {
       const isAuthor = item.user_id === profile?.id
       const isStaff = profile?.role === 'staff' || profile?.role === 'admin' || profile?.role === 'mentor'
       
-      const options: any[] = [
-        { text: 'Cancel', style: 'cancel' }
-      ]
+      const opts: OptionItem[] = []
       
       if (isAuthor || isStaff) {
-        options.push({
-          text: 'Delete',
-          style: 'destructive',
+        opts.push({
+          label: 'Delete',
+          isDestructive: true,
           onPress: () => {
-             Alert.alert('Delete', 'Are you sure?', [
-               { text: 'Cancel', style: 'cancel' },
-               { text: 'Delete', style: 'destructive', onPress: () => deleteMessage(item.id) }
-             ])
+            if (Platform.OS === 'web') {
+              if (confirm('Delete this message?')) deleteMessage(item.id)
+            } else {
+              Alert.alert('Delete', 'Are you sure?', [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Delete', style: 'destructive', onPress: () => deleteMessage(item.id) }
+              ])
+            }
           }
         })
       }
       
       if (!isAuthor) {
-        options.push({
-          text: 'Report',
+        opts.push({
+          label: 'Report',
           onPress: () => {
              Alert.alert('Reported', 'Message flagged for review.')
           }
         })
       }
       
-      Alert.alert('Options', undefined, options)
+      setOptionsTitle('Options')
+      setCurrentOptions(opts)
+      setOptionsVisible(true)
     }
 
     return (
@@ -193,6 +203,7 @@ export default function GeneralChat({ channelId }: { channelId: string }) {
         </View>
       </View>
       <UserProfileModal userId={selectedUserId} onClose={() => setSelectedUserId(null)} />
+      <OptionsModal visible={optionsVisible} title={optionsTitle} options={currentOptions} onClose={() => setOptionsVisible(false)} />
     </KeyboardAvoidingView>
   )
 }
