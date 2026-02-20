@@ -1,7 +1,7 @@
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { tokens } from '../../theme/tokens';
+import { tokens } from '../theme/tokens';
 
 export default function FloatingBackButton() {
   const navigation = useNavigation();
