@@ -20,14 +20,35 @@ export default function SignIn() {
     
     if (isSignUp) {
       const { error } = await supabase.auth.signUp({ email, password })
-      if (error) setError(error.message)
-      else setError('Account created! Check your email to confirm.')
+      if (error) {
+        setError(error.message)
+      } else {
+        setError('Account created! Check your email to confirm.')
+      }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
       if (error) setError(error.message)
     }
     
     setLoading(false)
+  }
+
+  async function onForgotPassword() {
+    if (!email) {
+      setError('Please enter your email address first.');
+      return;
+    }
+    setError(null);
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://pcdcmobileapp.vercel.app',
+    });
+    if (error) {
+      setError(error.message);
+    } else {
+      setError('If an account exists, a password reset link has been sent to your email.');
+    }
+    setLoading(false);
   }
 
   return (
@@ -85,6 +106,14 @@ export default function SignIn() {
                     {isSignUp ? "Already have an account? Sign In" : "Need an account? Sign Up"}
                   </Text>
                 </TouchableOpacity>
+
+                {!isSignUp && (
+                  <TouchableOpacity onPress={onForgotPassword} style={{ alignSelf: 'center', marginTop: 12 }}>
+                    <Text style={{ color: tokens.colors.light.textSecondary }}>
+                      Forgot Password?
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           </ScrollView>
