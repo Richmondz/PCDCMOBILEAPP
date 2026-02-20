@@ -5,9 +5,10 @@ import { tokens } from '../theme/tokens';
 
 export default function FloatingBackButton() {
   const navigation = useNavigation();
+  // This hook safely checks the navigation history.
   const index = useNavigationState(state => state.index);
 
-  // If the index is 0, we are on the root screen (the Tab Navigator), so don't show the button.
+  // If the index is 0, we are on a main tab screen, so we don't show the button.
   if (index === 0) {
     return null;
   }

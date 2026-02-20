@@ -20,6 +20,7 @@ import { ensureWeeklyRecap } from './src/store/recap'
 import PresenceTracker from './src/modules/presence'
 import ActivityTracker from './src/components/ActivityTracker'
 import InstallPrompt from './src/components/pwa/InstallPrompt'
+import FloatingBackButton from './src/components/FloatingBackButton';
 
 
 const Tab = createBottomTabNavigator()
@@ -66,38 +67,16 @@ export default function App() {
           <ActivityTracker />
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Root" component={Tabs} />
-            <Stack.Screen name="Thread" component={require('./src/screens/Inbox/Thread').default} />
-            <Stack.Screen name="NewMessage" component={require('./src/screens/Inbox/NewMessage').default} />
-            <Stack.Screen name="BreathingTimer" component={require('./src/screens/Tools/BreathingTimer').default} />
-            <Stack.Screen name="GroundingGame" component={require('./src/screens/Tools/GroundingGame').default} />
-            <Stack.Screen name="ReframeCard" component={require('./src/screens/Tools/ReframeCard').default} />
+            <Stack.Screen name="Settings" component={require('./src/screens/Profile/Settings').default} />
+            <Stack.Screen name="Notifications" component={require('./src/screens/Profile/Notifications').default} />
+            <Stack.Screen name="EditProfile" component={require('./src/screens/Profile/EditProfile').default} />
+            <Stack.Screen name="WeeklyRecap" component={require('./src/screens/Recap/WeeklyRecap').default} />
+            <Stack.Screen name="Chat" component={require('./src/screens/Inbox/Chat').default} />
             <Stack.Screen name="UploadClip" component={require('./src/screens/Clips/Upload').default} />
             <Stack.Screen name="Channels" component={require('./src/screens/Spaces/Channels').default} />
             <Stack.Screen name="ModerationQueue" component={require('./src/screens/Moderation/ModerationQueue').default} />
-            <Stack.Screen name="Admin" component={require('./src/screens/Admin').default} />
-            <Stack.Screen name="AdminCohorts" component={require('./src/screens/Admin/Cohorts').default} />
-            <Stack.Screen name="CohortMembers" component={require('./src/screens/Admin/CohortMembers').default} />
-            <Stack.Screen name="AdminMentors" component={require('./src/screens/Admin/Mentors').default} />
-            <Stack.Screen name="AdminPrompts" component={require('./src/screens/Admin/Prompts').default} />
-            {/* Removed: AdminClips, AdminRequests, BulkImport, AdminMentors */}
-            <Stack.Screen name="AdminReports" component={require('./src/screens/Admin/Reports').default} />
-            <Stack.Screen name="DataExport" component={require('./src/screens/Admin/DataExport').default} />
-            <Stack.Screen name="AskMentorForm" component={require('./src/screens/Inbox/AskMentorForm').default} />
-            <Stack.Screen name="Resources" component={require('./src/screens/Resources').default} />
-            <Stack.Screen name="HelpNow" component={require('./src/screens/Resources/HelpNow').default} />
-            {/* <Stack.Screen name="AdminRequests" component={require('./src/screens/Admin/Requests').default} /> */}
-            <Stack.Screen name="EscalationInbox" component={require('./src/screens/Staff/EscalationInbox').default} />
-            <Stack.Screen name="EscalateForm" component={require('./src/screens/Staff/EscalateForm').default} />
-            <Stack.Screen name="Notifications" component={require('./src/screens/Profile/Notifications').default} />
-            {/* <Stack.Screen name="BulkImport" component={require('./src/screens/Admin/BulkImport').default} /> */}
-            <Stack.Screen name="StaffDashboard" component={require('./src/screens/Staff/Dashboard').default} />
-            <Stack.Screen name="StaffMetrics" component={require('./src/screens/Staff/Metrics').default} />
-            <Stack.Screen name="ManageSlots" component={require('./src/screens/Office/ManageSlots').default} />
-            <Stack.Screen name="RequestSlot" component={require('./src/screens/Office/Request').default} />
-            <Stack.Screen name="OfficeApprovals" component={require('./src/screens/Office/Approvals').default} />
-            <Stack.Screen name="WeeklyReportDetail" component={require('./src/screens/Profile/WeeklyReportDetail').default} />
-            <Stack.Screen name="PwaDebug" component={require('./src/screens/PWA/Debug').default} />
           </Stack.Navigator>
+          <FloatingBackButton />
           {banner ? <Banner message={banner} /> : null}
         </AuthGate>
       </NavigationContainer>
