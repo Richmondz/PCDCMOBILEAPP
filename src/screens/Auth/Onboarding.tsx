@@ -8,7 +8,8 @@ import { tokens } from '../../theme/tokens'
 import Composer from '../../components/Composer'
 import { PrimaryButton } from '../../components/Buttons'
 import { useProfile } from '../../store/profile'
-import { Ionicons } from '@expo/vector-icons'
+import { decode } from 'base64-arraybuffer'
+import * as FileSystem from 'expo-file-system';
 
 export default function Onboarding() {
   const { profile, loadProfile } = useProfile()
@@ -35,25 +36,20 @@ export default function Onboarding() {
 
   async function uploadAvatar(uri: string): Promise<string | null> {
     try {
-      const ext = uri.split('.').pop()
-      const path = `${profile?.id}/avatar.${ext}`
-      
-      const formData = new FormData()
-      formData.append('file', {
-        uri,
-        name: `avatar.${ext}`,
-        type: `image/${ext}`
-      } as any)
+      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
+      const ext = uri.split('.').pop();
+      const path = `${profile?.id}/avatar.${ext}`;
+      const contentType = `image/${ext}`;
 
-      const { error } = await supabase.storage.from('avatars').upload(path, formData, { upsert: true })
-      if (error) throw error
+      const { error } = await supabase.storage.from('avatars').upload(path, decode(base64), { contentType, upsert: true });
+      if (error) throw error;
 
-      const { data } = supabase.storage.from('avatars').getPublicUrl(path)
-      return data.publicUrl
+      const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+      return data.publicUrl;
     } catch (e: any) {
-      console.log('Upload error', e)
-      Alert.alert('Upload failed', e.message)
-      return null
+      console.log('Upload error', e);
+      Alert.alert('Upload failed', e.message);
+      return null;
     }
   }
 
