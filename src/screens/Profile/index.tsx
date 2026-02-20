@@ -8,6 +8,7 @@ import { supabase } from '../../lib/supabase'
 import SavedTools from './SavedTools'
 import { useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
+import * as Notifications from 'expo-notifications';
 import { useEffect, useState } from 'react'
 
 export default function Profile({ route }: any) {
@@ -35,6 +36,24 @@ export default function Profile({ route }: any) {
 
   async function signOut() {
     await supabase.auth.signOut()
+  }
+
+  async function registerForPushNotificationsAsync() {
+    let token;
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+    // Here you would typically send the token to your backend
+    return token;
   }
 
   const MenuLink = ({ title, icon, onPress, color }: any) => (
@@ -158,7 +177,8 @@ export default function Profile({ route }: any) {
               )}
     
               <Section title="Account">
-                <MenuLink title="Notification Settings" icon="notifications-outline" onPress={() => nav.navigate('Notifications')} />
+                <MenuLink title="Enable Notifications" icon="notifications-outline" onPress={registerForPushNotificationsAsync} />
+                <MenuLink title="Notification Settings" icon="settings-outline" onPress={() => nav.navigate('Notifications')} />
                 <TouchableOpacity style={styles.signOutBtn} onPress={signOut}>
                   <Text style={styles.signOutText}>Sign Out</Text>
                 </TouchableOpacity>

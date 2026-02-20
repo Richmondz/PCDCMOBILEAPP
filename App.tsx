@@ -3,7 +3,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { StatusBar } from 'expo-status-bar'
-import { useColorScheme } from 'react-native'
+import { useColorScheme, Platform } from 'react-native'
 import HomeScreen from './src/screens/Home'
 import SpacesScreen from './src/screens/Spaces'
 import ClipsScreen from './src/screens/Clips'
@@ -44,6 +44,15 @@ export default function App() {
       post: async (p) => { await supabase.from('channel_posts').insert(p) },
       message: async (p) => { await supabase.from('messages').insert(p) }
     })
+    if (Platform.OS === 'web' && 'serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(registration => {
+          console.log('SW registered: ', registration);
+        }).catch(registrationError => {
+          console.log('SW registration failed: ', registrationError);
+        });
+      });
+    }
   }, [])
 
   return (
