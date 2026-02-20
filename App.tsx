@@ -20,7 +20,7 @@ import { ensureWeeklyRecap } from './src/store/recap'
 import PresenceTracker from './src/modules/presence'
 import ActivityTracker from './src/components/ActivityTracker'
 import InstallPrompt from './src/components/pwa/InstallPrompt'
-import FloatingBackButton from './src/components/FloatingBackButton';
+
 
 const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
@@ -61,7 +61,6 @@ export default function App() {
       <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
         <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
         <AuthGate>
-          <FloatingBackButton />
           <InstallPrompt />
           <PresenceTracker />
           <ActivityTracker />
