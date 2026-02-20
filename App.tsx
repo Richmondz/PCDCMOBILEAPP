@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { StatusBar } from 'expo-status-bar'
 import { useColorScheme, Platform } from 'react-native'
 import HomeScreen from './src/screens/Home'
-import SpacesStack from './src/screens/Spaces/SpacesStack';
+import SpacesScreen from './src/screens/Spaces';
 import ClipsScreen from './src/screens/Clips'
 import InboxScreen from './src/screens/Inbox'
 import ProfileScreen from './src/screens/Profile'
@@ -20,6 +20,7 @@ import { ensureWeeklyRecap } from './src/store/recap'
 import PresenceTracker from './src/modules/presence'
 import ActivityTracker from './src/components/ActivityTracker'
 import InstallPrompt from './src/components/pwa/InstallPrompt'
+import FloatingBackButton from './src/components/FloatingBackButton';
 
 const Tab = createBottomTabNavigator()
 const Stack = createNativeStackNavigator()
@@ -60,10 +61,11 @@ export default function App() {
       <NavigationContainer theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
         <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
         <AuthGate>
+          <FloatingBackButton />
           <InstallPrompt />
           <PresenceTracker />
           <ActivityTracker />
-          <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: true }}>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Root" component={Tabs} />
             <Stack.Screen name="Thread" component={require('./src/screens/Inbox/Thread').default} />
             <Stack.Screen name="NewMessage" component={require('./src/screens/Inbox/NewMessage').default} />
@@ -71,6 +73,7 @@ export default function App() {
             <Stack.Screen name="GroundingGame" component={require('./src/screens/Tools/GroundingGame').default} />
             <Stack.Screen name="ReframeCard" component={require('./src/screens/Tools/ReframeCard').default} />
             <Stack.Screen name="UploadClip" component={require('./src/screens/Clips/Upload').default} />
+            <Stack.Screen name="Channels" component={require('./src/screens/Spaces/Channels').default} />
             <Stack.Screen name="ModerationQueue" component={require('./src/screens/Moderation/ModerationQueue').default} />
             <Stack.Screen name="Admin" component={require('./src/screens/Admin').default} />
             <Stack.Screen name="AdminCohorts" component={require('./src/screens/Admin/Cohorts').default} />
@@ -107,7 +110,7 @@ function Tabs() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Spaces" component={SpacesStack} />
+      <Tab.Screen name="Spaces" component={SpacesScreen} />
       {/* <Tab.Screen name="Clips" component={ClipsScreen} /> */}
       <Tab.Screen name="Inbox" component={InboxScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
