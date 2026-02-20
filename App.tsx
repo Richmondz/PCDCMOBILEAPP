@@ -63,7 +63,7 @@ export default function App() {
           <InstallPrompt />
           <PresenceTracker />
           <ActivityTracker />
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: true }}>
             <Stack.Screen name="Root" component={Tabs} />
             <Stack.Screen name="Thread" component={require('./src/screens/Inbox/Thread').default} />
             <Stack.Screen name="NewMessage" component={require('./src/screens/Inbox/NewMessage').default} />

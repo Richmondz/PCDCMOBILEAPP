@@ -5,9 +5,23 @@ import Composer from '../../components/Composer'
 import { PrimaryButton } from '../../components/Buttons'
 import { useDailyPulse } from '../../store/dailyPulse'
 import { tokens } from '../../theme/tokens'
+import { useEffect } from 'react';
 
 export default function DailyPulse() {
-  const { mood, setMood, tags, toggleTag, note, setNote, saveCheckIn } = useDailyPulse()
+  const { mood, setMood, tags, toggleTag, note, setNote, saveCheckIn, hasCheckedInToday, checkIfUserHasCheckedIn } = useDailyPulse();
+
+  useEffect(() => {
+    checkIfUserHasCheckedIn();
+  }, []);
+
+  if (hasCheckedInToday) {
+    return (
+      <View style={styles.card}>
+        <Text style={styles.title}>You've checked in today!</Text>
+        <Text style={styles.subtitle}>Great job on tracking your mood. Come back tomorrow to check in again.</Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.card}>
       <Text style={styles.title}>How are you feeling?</Text>
