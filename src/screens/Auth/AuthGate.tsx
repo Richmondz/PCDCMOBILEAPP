@@ -14,19 +14,11 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   useEffect(() => { initAuth(setSession) }, [])
   useEffect(() => { if (session) loadProfile() }, [session])
 
-  if (!session) return <SignIn />
-  if (!profile) return <View style={{flex:1,backgroundColor:'#fff'}} /> // Loading state
-  
-  // Check if hobbies/bio/zodiac are missing (rudimentary check for "onboarding complete")
-  // Or check specific flag if we added one. For now, let's assume if 'bio' is empty, they need to onboard.
-  const needsOnboarding = !profile.bio || !profile.hobbies || !profile.hobbies.length
-  
-  if (needsOnboarding) return <Onboarding />
-
   return (
     <View style={{ flex: 1 }}>
+      <Text style={{position: 'absolute', top: 80, left: 0, right: 0, textAlign: 'center', backgroundColor: 'yellow', padding: 10, zIndex: 9999, color: 'black', fontWeight: 'bold'}}>DEBUGGER v4</Text>
       {children}
-      <InstallPrompt />
     </View>
   );
 }
+

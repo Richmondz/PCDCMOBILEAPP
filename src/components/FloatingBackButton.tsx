@@ -5,13 +5,19 @@ import { tokens } from '../../theme/tokens';
 
 export default function FloatingBackButton() {
   const navigation = useNavigation();
+  const canGoBack = navigation.canGoBack();
 
-  if (!navigation.canGoBack()) {
-    return null;
-  }
+  const buttonStyle = [
+    styles.button,
+    !canGoBack && styles.disabledButton
+  ];
 
   return (
-    <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
+    <TouchableOpacity 
+      style={buttonStyle} 
+      onPress={() => canGoBack && navigation.goBack()}
+      disabled={!canGoBack}
+    >
       <Ionicons name="arrow-back" size={24} color="white" />
     </TouchableOpacity>
   );
@@ -33,6 +39,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 8,
-    zIndex: 1000, // Ensure it's on top of everything
+    zIndex: 1000,
   },
+  disabledButton: {
+    backgroundColor: 'rgba(255, 0, 0, 0.5)', // Red and semi-transparent for debugging
+  }
 });
