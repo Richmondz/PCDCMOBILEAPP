@@ -1,190 +1,104 @@
-import React, { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, Platform, Image } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-// Detect iOS
-const isIos = () => {
-  if (Platform.OS !== 'web') return false
-  const userAgent = window.navigator.userAgent.toLowerCase()
-  return /iphone|ipad|ipod/.test(userAgent)
-}
-
-// Detect if already in standalone mode
-const isStandalone = () => {
-  if (Platform.OS !== 'web') return false
-  return (
-    window.matchMedia('(display-mode: standalone)').matches ||
-    (window.navigator as any).standalone === true
-  )
-}
-
-export default function InstallPrompt() {
-  const [showPrompt, setShowPrompt] = useState(false)
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
-  const [isIosPrompt, setIsIosPrompt] = useState(false)
+const InstallPrompt = () => {
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+  const [showIosInstall, setShowIosInstall] = useState(false);
 
   useEffect(() => {
-    if (Platform.OS !== 'web') return
-    if (isStandalone()) return
+    const handleBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event);
+    };
 
-    const checkDismissed = async () => {
-      const dismissed = await AsyncStorage.getItem('pwa_prompt_dismissed')
-      if (dismissed) {
-        const timestamp = parseInt(dismissed, 10)
-        // Show again after 7 days
-        if (Date.now() - timestamp < 7 * 24 * 60 * 60 * 1000) {
-          return
-        }
+    if (Platform.OS === 'web') {
+      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+      const isIos = () => /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isSafari = () => /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+      if (isIos() && isSafari() && !isInStandaloneMode()) {
+        setShowIosInstall(true);
       }
 
-      // Android / Chrome
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault()
-        setDeferredPrompt(e)
-        setShowPrompt(true)
-      })
-
-      // iOS
-      if (isIos()) {
-        setShowPrompt(true)
-        setIsIosPrompt(true)
-      }
+      return () => {
+        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      };
     }
+  }, []);
 
-    checkDismissed()
-  }, [])
-
-  const handleInstall = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt()
-      const { outcome } = await deferredPrompt.userChoice
-      if (outcome === 'accepted') {
-        setShowPrompt(false)
+  const handleInstallClick = () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    installPrompt.userChoice.then((choiceResult: any) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt');
       }
-      setDeferredPrompt(null)
-    }
+      setInstallPrompt(null);
+    });
+  };
+
+  if (!installPrompt && !showIosInstall) {
+    return null;
   }
 
-  const handleDismiss = async () => {
-    setShowPrompt(false)
-    await AsyncStorage.setItem('pwa_prompt_dismissed', Date.now().toString())
+  if (showIosInstall) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.text}>
+          To install, tap the Share button <Ionicons name="share-outline" size={18} /> and then 'Add to Home Screen'.
+        </Text>
+        <TouchableOpacity onPress={() => setShowIosInstall(false)} style={styles.closeButton}>
+          <Ionicons name="close" size={20} color="white" />
+        </TouchableOpacity>
+      </View>
+    );
   }
-
-  if (!showPrompt) return null
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <View style={styles.iconContainer}>
-            <Ionicons name="logo-pwa" size={24} color="#FFF" />
-          </View>
-          <View style={styles.textContainer}>
-            <Text style={styles.title}>Install YouthConnect</Text>
-            <Text style={styles.subtitle}>
-              {isIosPrompt 
-                ? "Install this app on your iPhone for the best experience." 
-                : "Add to Home Screen for quick access and full-screen view."}
-            </Text>
-          </View>
-          <TouchableOpacity onPress={handleDismiss} style={styles.closeBtn}>
-            <Ionicons name="close" size={20} color="#9CA3AF" />
-          </TouchableOpacity>
-        </View>
-
-        {isIosPrompt ? (
-          <View style={styles.iosInstructions}>
-            <Text style={styles.iosStep}>1. Tap the <Ionicons name="share-outline" size={16} color="#FFF" /> Share button below</Text>
-            <Text style={styles.iosStep}>2. Select <Text style={{ fontWeight: '700' }}>Add to Home Screen</Text></Text>
-          </View>
-        ) : (
-          <TouchableOpacity style={styles.installBtn} onPress={handleInstall}>
-            <Text style={styles.installBtnText}>Install App</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      <Text style={styles.text}>Install the YouthConnect Hub app!</Text>
+      <TouchableOpacity style={styles.button} onPress={handleInstallClick}>
+        <Text style={styles.buttonText}>Install</Text>
+      </TouchableOpacity>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 20,
-    left: 16,
-    right: 16,
-    alignItems: 'center',
-    zIndex: 9999,
-    // Only show on mobile widths if desired, but React Native Web usually handles responsiveness
-    maxWidth: 500,
-    alignSelf: 'center',
-    width: '100%'
-  },
-  content: {
-    backgroundColor: '#1F2937',
-    borderRadius: 16,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#2c3e50',
     padding: 16,
-    width: '100%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-    borderWidth: 1,
-    borderColor: '#374151'
-  },
-  header: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12
-  },
-  iconContainer: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#374151',
-    borderRadius: 10,
     alignItems: 'center',
-    justifyContent: 'center'
-  },
-  textContainer: {
-    flex: 1
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#F9FAFB',
-    marginBottom: 4
-  },
-  subtitle: {
-    fontSize: 13,
-    color: '#9CA3AF',
-    lineHeight: 18
-  },
-  closeBtn: {
-    padding: 4
-  },
-  installBtn: {
-    marginTop: 16,
-    backgroundColor: '#6B46C1',
-    paddingVertical: 10,
-    borderRadius: 8,
-    alignItems: 'center'
-  },
-  installBtnText: {
-    color: '#FFF',
-    fontWeight: '600',
-    fontSize: 14
-  },
-  iosInstructions: {
-    marginTop: 12,
-    paddingTop: 12,
+    justifyContent: 'space-between',
     borderTopWidth: 1,
-    borderTopColor: '#374151',
-    gap: 8
+    borderTopColor: '#34495e',
   },
-  iosStep: {
-    color: '#D1D5DB',
-    fontSize: 13
-  }
-})
+  text: {
+    color: 'white',
+    fontSize: 16,
+    flex: 1,
+  },
+  button: {
+    backgroundColor: '#3498db',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  closeButton: {
+    padding: 4,
+  },
+});
+
+export default InstallPrompt;
