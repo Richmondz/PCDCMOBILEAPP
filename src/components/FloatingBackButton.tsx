@@ -1,23 +1,19 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { tokens } from '../theme/tokens';
 
 export default function FloatingBackButton() {
   const navigation = useNavigation();
-  const canGoBack = navigation.canGoBack();
+  const index = useNavigationState(state => state.index);
 
-  const buttonStyle = [
-    styles.button,
-    !canGoBack && styles.disabledButton
-  ];
+  // If the index is 0, we are on the root screen (the Tab Navigator), so don't show the button.
+  if (index === 0) {
+    return null;
+  }
 
   return (
-    <TouchableOpacity 
-      style={buttonStyle} 
-      onPress={() => canGoBack && navigation.goBack()}
-      disabled={!canGoBack}
-    >
+    <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()}>
       <Ionicons name="arrow-back" size={24} color="white" />
     </TouchableOpacity>
   );
@@ -26,7 +22,7 @@ export default function FloatingBackButton() {
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 90, // Raised to be above the bottom tab bar
     left: 20,
     backgroundColor: tokens.colors.light.primary,
     width: 50,
@@ -40,8 +36,5 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 8,
     zIndex: 1000,
-  },
-  disabledButton: {
-    backgroundColor: 'rgba(255, 0, 0, 0.5)', // Red and semi-transparent for debugging
   }
 });
