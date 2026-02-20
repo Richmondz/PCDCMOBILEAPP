@@ -21,6 +21,14 @@ import PresenceTracker from './src/modules/presence'
 import ActivityTracker from './src/components/ActivityTracker'
 import InstallPrompt from './src/components/pwa/InstallPrompt'
 import FloatingBackButton from './src/components/FloatingBackButton';
+import SettingsScreen from './src/screens/Profile/Settings';
+import NotificationsScreen from './src/screens/Profile/Notifications';
+import EditProfileScreen from './src/screens/Profile/EditProfile';
+import WeeklyRecapScreen from './src/screens/Recap/WeeklyRecap';
+import ChatScreen from './src/screens/Inbox/Chat';
+import UploadClipScreen from './src/screens/Clips/Upload';
+import ChannelsScreen from './src/screens/Spaces/Channels';
+import ModerationQueueScreen from './src/screens/Moderation/ModerationQueue';
 
 
 const Tab = createBottomTabNavigator()
@@ -67,14 +75,14 @@ export default function App() {
           <ActivityTracker />
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Root" component={Tabs} />
-            <Stack.Screen name="Settings" component={require('./src/screens/Profile/Settings').default} />
-            <Stack.Screen name="Notifications" component={require('./src/screens/Profile/Notifications').default} />
-            <Stack.Screen name="EditProfile" component={require('./src/screens/Profile/EditProfile').default} />
-            <Stack.Screen name="WeeklyRecap" component={require('./src/screens/Recap/WeeklyRecap').default} />
-            <Stack.Screen name="Chat" component={require('./src/screens/Inbox/Chat').default} />
-            <Stack.Screen name="UploadClip" component={require('./src/screens/Clips/Upload').default} />
-            <Stack.Screen name="Channels" component={require('./src/screens/Spaces/Channels').default} />
-            <Stack.Screen name="ModerationQueue" component={require('./src/screens/Moderation/ModerationQueue').default} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+            <Stack.Screen name="Notifications" component={NotificationsScreen} />
+            <Stack.Screen name="EditProfile" component={EditProfileScreen} />
+            <Stack.Screen name="WeeklyRecap" component={WeeklyRecapScreen} />
+            <Stack.Screen name="Chat" component={ChatScreen} />
+            <Stack.Screen name="UploadClip" component={UploadClipScreen} />
+            <Stack.Screen name="Channels" component={ChannelsScreen} />
+            <Stack.Screen name="ModerationQueue" component={ModerationQueueScreen} />
           </Stack.Navigator>
           <FloatingBackButton />
           {banner ? <Banner message={banner} /> : null}
