@@ -19,12 +19,12 @@ This document provides an overview of the PWA features that have been added to t
 5.  **iOS Meta Tags** (`app.json`):
     - Specific meta tags have been added to ensure a better 'add to home screen' experience on iOS, including `apple-mobile-web-app-capable` and `apple-touch-icon`.
 
-## How to Test Locally
+## How to Test and Install
 
-To test the PWA features, you can use the live deployment URL:
-[https://pcdcmobileapp-git-main-cobyyangs-projects.vercel.app](https://pcdcmobileapp-git-main-cobyyangs-projects.vercel.app)
+To test the PWA features and install the app, use the public production URL:
+[https://pcdcmobileapp.vercel.app](https://pcdcmobileapp.vercel.app)
 
-Alternatively, you can run a production build of the web app locally, as service workers are typically disabled in development mode for easier debugging.
+This link can be shared with anyone and does not require a login.
 
 1.  **Build the project for web production:**
     ```bash
