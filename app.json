@@ -24,7 +24,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0B0F17"
-      }
+      },
+      "package": "com.yzhol.pcdcteenclubconnect"
     },
     "web": {
       "bundler": "webpack",
@@ -46,7 +47,10 @@
     },
     "extra": {
       "SUPABASE_URL": "https://uuqejogbgddmcnirrqkn.supabase.co",
-      "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1cWVqb2diZ2RkbWNuaXJycWtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5MjEwNzMsImV4cCI6MjA4MTQ5NzA3M30.CJ5mLj9IJElyQcN7CbodKw2Y7riCAISboYmH-g_WFE0"
+      "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1cWVqb2diZ2RkbWNuaXJycWtuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5MjEwNzMsImV4cCI6MjA4MTQ5NzA3M30.CJ5mLj9IJElyQcN7CbodKw2Y7riCAISboYmH-g_WFE0",
+      "eas": {
+        "projectId": "5873ca19-c5cc-4393-8de6-6a9ec77ce196"
+      }
     },
     "plugins": [
       "expo-asset",
