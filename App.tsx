@@ -4,31 +4,31 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { StatusBar } from 'expo-status-bar'
 import { useColorScheme, Platform } from 'react-native'
-import HomeScreen from './src/screens/Home'
-import SpacesScreen from './src/screens/Spaces';
-import ClipsScreen from './src/screens/Clips'
-import InboxScreen from './src/screens/Inbox'
-import ProfileScreen from './src/screens/Profile'
-import { AuthGate } from './src/screens/Auth/AuthGate'
-import { tokens } from './src/theme/tokens'
-import { useEffect, useState } from 'react'
-import { useNotifications } from './src/store/notifications'
-import Banner from './src/components/Banner'
-import * as Offline from './src/lib/offline_storage'
-import { supabase } from './src/lib/supabase'
-import { ensureWeeklyRecap } from './src/store/recap'
-import PresenceTracker from './src/modules/presence'
-import ActivityTracker from './src/components/ActivityTracker'
-import InstallPrompt from './src/components/pwa/InstallPrompt'
+import HomeScreen from './src/screens/home';
+import SpacesScreen from './src/screens/spaces';
+import ClipsScreen from './src/screens/clips';
+import InboxScreen from './src/screens/inbox';
+import ProfileScreen from './src/screens/profile';
+import { AuthGate } from './src/screens/auth/AuthGate';
+import { tokens } from './src/theme/tokens';
+import { useEffect, useState } from 'react';
+import { useNotifications } from './src/store/notifications';
+import Banner from './src/components/Banner';
+import * as Offline from './src/lib/offline_storage';
+import { supabase } from './src/lib/supabase';
+import { ensureWeeklyRecap } from './src/store/recap';
+import PresenceTracker from './src/modules/presence';
+import ActivityTracker from './src/components/ActivityTracker';
+import InstallPrompt from './src/components/pwa/InstallPrompt';
 import FloatingBackButton from './src/components/FloatingBackButton';
-import SettingsScreen from './src/screens/Profile/Settings';
-import NotificationsScreen from './src/screens/Profile/Notifications';
-import EditProfileScreen from './src/screens/Profile/EditProfile';
-import WeeklyRecapScreen from './src/screens/Recap/WeeklyRecap';
-import ChatScreen from './src/screens/Inbox/Chat';
-import UploadClipScreen from './src/screens/Clips/Upload';
-import ChannelsScreen from './src/screens/Spaces/Channels';
-import ModerationQueueScreen from './src/screens/Moderation/ModerationQueue';
+import SettingsScreen from './src/screens/profile/Settings';
+import NotificationsScreen from './src/screens/profile/Notifications';
+import EditProfileScreen from './src/screens/profile/EditProfile';
+import WeeklyRecapScreen from './src/screens/recap/WeeklyRecap';
+import ChatScreen from './src/screens/inbox/Chat';
+import UploadClipScreen from './src/screens/clips/Upload';
+import ChannelsScreen from './src/screens/spaces/Channels';
+import ModerationQueueScreen from './src/screens/moderation/ModerationQueue';
 
 
 const Tab = createBottomTabNavigator()
