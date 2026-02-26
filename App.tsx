@@ -26,7 +26,7 @@ import SettingsScreen from './src/screens/Profile/Settings';
 import NotificationsScreen from './src/screens/Profile/Notifications';
 import EditProfileScreen from './src/screens/Profile/EditProfile';
 import WeeklyRecapScreen from './src/screens/Profile/WeeklyReportDetail';
-import ChatScreen from './src/screens/Inbox/Chat';
+import ChatScreen from './src/screens/Inbox/Thread';
 import UploadClipScreen from './src/screens/Clips/Upload';
 import ChannelsScreen from './src/screens/Spaces/Channels';
 import ModerationQueueScreen from './src/screens/Moderation/ModerationQueue';
@@ -86,7 +86,7 @@ export default function App() {
             <Stack.Screen name="Notifications" component={NotificationsScreen} />
             <Stack.Screen name="EditProfile" component={EditProfileScreen} />
             <Stack.Screen name="WeeklyRecap" component={WeeklyRecapScreen} />
-            <Stack.Screen name="Chat" component={ChatScreen} />
+            <Stack.Screen name="Thread" component={ChatScreen} />
             <Stack.Screen name="UploadClip" component={UploadClipScreen} />
             <Stack.Screen name="Channels" component={ChannelsScreen} />
             <Stack.Screen name="ModerationQueue" component={ModerationQueueScreen} />
