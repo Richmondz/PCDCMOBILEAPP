@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import AppHeader from '../../components/AppHeader'
 import { tokens } from '../../theme/tokens'
 import { useProfile } from '../../store/profile'
+import { useInbox } from '../../store/inbox'
 import { supabase } from '../../lib/supabase'
 import SavedTools from './SavedTools'
 import { useNavigation } from '@react-navigation/native'
@@ -13,6 +14,7 @@ import { useEffect, useState } from 'react'
 
 export default function Profile({ route }: any) {
   const { profile: myProfile } = useProfile()
+  const { createDM } = useInbox()
   const nav = useNavigation<any>()
   const [targetProfile, setTargetProfile] = useState<any>(null)
   const [loading, setLoading] = useState(false)
@@ -39,7 +41,6 @@ export default function Profile({ route }: any) {
   }
 
   async function registerForPushNotificationsAsync() {
-    let token;
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
     if (existingStatus !== 'granted') {
@@ -47,13 +48,19 @@ export default function Profile({ route }: any) {
       finalStatus = status;
     }
     if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
+      alert('Notification permission denied. You can enable it in your device settings.');
       return;
     }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
-    // Here you would typically send the token to your backend
-    return token;
+    try {
+      const token = (await Notifications.getExpoPushTokenAsync()).data;
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user && token) {
+        await supabase.from('device_tokens').upsert({ user_id: user.id, token }, { onConflict: 'token' });
+        alert('Notifications enabled!');
+      }
+    } catch (e) {
+      alert('Failed to register for push notifications. Please try again.');
+    }
   }
 
   const MenuLink = ({ title, icon, onPress, color }: any) => (
@@ -110,12 +117,10 @@ export default function Profile({ route }: any) {
                <TouchableOpacity 
                  style={styles.msgBtn}
                  onPress={async () => {
-                   // Create/Navigate DM
-                   // We need to call createDM from inbox store or logic here
-                   // For now, let's navigate to Inbox with params? 
-                   // Or just create it
-                   const { data } = await supabase.rpc('create_dm', { target: targetId })
-                   nav.navigate('Inbox', { screen: 'Thread', params: { id: data } })
+                   const chatId = await createDM(targetId)
+                   if (chatId) {
+                     nav.navigate('Thread', { id: chatId, otherId: targetId, otherName: profile?.nickname || 'User', otherRole: profile?.role || 'teen' })
+                   }
                  }}
                >
                  <Ionicons name="chatbubble" size={20} color="#FFF" />
@@ -177,6 +182,7 @@ export default function Profile({ route }: any) {
               )}
     
               <Section title="Account">
+                <MenuLink title="Edit Profile" icon="person-outline" onPress={() => nav.navigate('EditProfile')} />
                 <MenuLink title="Enable Notifications" icon="notifications-outline" onPress={registerForPushNotificationsAsync} />
                 <MenuLink title="Notification Settings" icon="settings-outline" onPress={() => nav.navigate('Notifications')} />
                 <TouchableOpacity style={styles.signOutBtn} onPress={signOut}>

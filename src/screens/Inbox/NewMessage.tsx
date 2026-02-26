@@ -34,7 +34,7 @@ export default function NewMessage() {
   async function start(userId: string, nickname: string, role: string) {
     const id = await createDM(userId)
     if (id) {
-      nav.replace('Thread', { id, otherName: nickname, otherRole: role })
+      nav.replace('Thread', { id, otherId: userId, otherName: nickname, otherRole: role })
     }
   }
 

@@ -59,16 +59,16 @@ export const useDailyPulse = create<DailyState>((set, get) => ({
     if (!user) return;
 
     if (get().hasCheckedInToday) {
-      useNotifications.getState().setBanner({ message: 'You have already checked in today. Come back tomorrow!', type: 'info' });
+      useNotifications.getState().setBanner('You have already checked in today. Come back tomorrow!');
       return;
     }
 
     const s = get();
     const { error } = await supabase.from('check_ins').insert({ user_id: user.id, mood: s.mood, tags: s.tags, note: s.note });
     if (error) {
-      useNotifications.getState().setBanner({ message: `Error: ${error.message}`, type: 'error' });
+      useNotifications.getState().setBanner(`Error: ${error.message}`);
     } else {
-      useNotifications.getState().setBanner({ message: 'Your daily pulse has been recorded!', type: 'success' });
+      useNotifications.getState().setBanner('Your daily pulse has been recorded!');
       set({ hasCheckedInToday: true });
     }
   },

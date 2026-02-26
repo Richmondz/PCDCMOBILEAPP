@@ -12,15 +12,19 @@ import { PrimaryButton } from '../../components/Buttons'
 export default function EditProfile() {
   const { profile, loadProfile } = useProfile()
   const [bio, setBio] = useState(profile?.bio || '')
+  const [nickname, setNickname] = useState(profile?.nickname || '')
 
   useEffect(() => {
-    if (profile?.bio) setBio(profile.bio)
-  }, [profile?.bio])
+    if (profile) {
+      setBio(profile.bio || '')
+      setNickname(profile.nickname || '')
+    }
+  }, [profile?.id])
 
   async function save() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
-    await supabase.from('profiles').update({ bio }).eq('id', user.id)
+    await supabase.from('profiles').update({ bio, nickname: nickname.trim() || profile?.nickname }).eq('id', user.id)
     loadProfile()
     Alert.alert('Saved', 'Your profile has been updated.')
   }
@@ -31,6 +35,8 @@ export default function EditProfile() {
         <AppHeader title="Edit Profile" showBack />
         <ScrollView contentContainerStyle={styles.scroll}>
           <View style={styles.card}>
+            <Text style={styles.label}>Display Name</Text>
+            <Composer value={nickname} onChange={setNickname} limit={50} placeholder="Your name or nickname" />
             <Text style={styles.label}>Bio</Text>
             <Composer
               value={bio}

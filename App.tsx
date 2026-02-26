@@ -36,6 +36,10 @@ import WeeklyReportDetailScreen from './src/screens/Profile/WeeklyReportDetail';
 import BreathingTimerScreen from './src/screens/Tools/BreathingTimer';
 import GroundingGameScreen from './src/screens/Tools/GroundingGame';
 import ReframeCardScreen from './src/screens/Tools/ReframeCard';
+import AskMentorFormScreen from './src/screens/Inbox/AskMentorForm';
+import NewMessageScreen from './src/screens/Inbox/NewMessage';
+import EscalateFormScreen from './src/screens/Staff/EscalateForm';
+import AdminScreen from './src/screens/Admin';
 
 
 const Tab = createBottomTabNavigator()
@@ -79,6 +83,10 @@ export default function App() {
             <Stack.Screen name="EditProfile" component={EditProfileScreen} />
             <Stack.Screen name="WeeklyRecap" component={WeeklyRecapScreen} />
             <Stack.Screen name="Thread" component={ChatScreen} />
+            <Stack.Screen name="AskMentorForm" component={AskMentorFormScreen} />
+            <Stack.Screen name="NewMessage" component={NewMessageScreen} />
+            <Stack.Screen name="EscalateForm" component={EscalateFormScreen} />
+            <Stack.Screen name="Admin" component={AdminScreen} />
             <Stack.Screen name="UploadClip" component={UploadClipScreen} />
             <Stack.Screen name="Channels" component={ChannelsScreen} />
             <Stack.Screen name="ModerationQueue" component={ModerationQueueScreen} />

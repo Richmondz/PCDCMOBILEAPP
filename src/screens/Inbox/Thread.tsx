@@ -13,8 +13,16 @@ import { useNotifications } from '../../store/notifications'
 import { useNavigation } from '@react-navigation/native'
 
 export default function Thread({ route }: any) {
-  const { id, otherName, otherRole } = route.params
+  const { id, otherName, otherRole, otherId } = route?.params || {}
   const { messages, loadMessages, loadMoreMessages, sendMessage, subscribe, markRead, loading } = useInbox()
+
+  if (!id) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+        <Text style={{ color: '#6B7280', textAlign: 'center' }}>Invalid conversation. Please go back and try again.</Text>
+      </View>
+    )
+  }
   const [text, setText] = useState('')
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const subRef = useRef<{ unsubscribe: () => void } | null>(null)
@@ -57,7 +65,7 @@ export default function Thread({ route }: any) {
         <View style={styles.header}>
           <TouchableOpacity 
             style={{ flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 }}
-            onPress={() => nav.navigate('Profile', { userId: route.params.otherId })}
+            onPress={() => otherId && nav.navigate('Profile', { userId: otherId })}
           >
             <View style={styles.headerAvatar}>
               <Text style={styles.headerAvatarText}>{otherName?.[0]?.toUpperCase() || '?'}</Text>
@@ -72,8 +80,7 @@ export default function Thread({ route }: any) {
           <PrimaryButton 
             title="Escalate" 
             onPress={() => nav.navigate('EscalateForm', { type: 'message', conversationId: id })}
-            style={{ paddingVertical: 6, paddingHorizontal: 12, height: 'auto' }}
-            textStyle={{ fontSize: 12 }}
+            style={{ paddingVertical: 6, paddingHorizontal: 12 }}
           />
         </View>
 
