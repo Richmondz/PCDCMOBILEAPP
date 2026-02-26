@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, StyleSheet } from 'react-native'
+import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
 import { tokens } from '../theme/tokens'
 import { Ionicons } from '@expo/vector-icons'
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated'

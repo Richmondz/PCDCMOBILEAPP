@@ -61,13 +61,11 @@ export default function App() {
       post: async (p) => { await supabase.from('channel_posts').insert(p) },
       message: async (p) => { await supabase.from('messages').insert(p) }
     })
-    if (Platform.OS === 'web' && 'serviceWorker' in navigator) {
+    if (Platform.OS === 'web' && 'serviceWorker' in navigator && typeof window !== 'undefined' && window.isSecureContext) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(registration => {
-          console.log('SW registered: ', registration);
-        }).catch(registrationError => {
-          console.log('SW registration failed: ', registrationError);
-        });
+        navigator.serviceWorker.register('/sw.js')
+          .then(() => {})
+          .catch(() => { /* SW registration fails in some contexts (e.g. cross-origin) - app still works */ });
       });
     }
   }, [])

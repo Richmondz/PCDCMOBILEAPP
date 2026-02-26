@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import * as Notifications from 'expo-notifications'
+import Constants from 'expo-constants'
 import { supabase } from '../lib/supabase'
 
 type NotificationState = {
@@ -12,7 +13,8 @@ export const useNotifications = create<NotificationState>((set) => ({
   banner: null,
   setBanner: (m) => set({ banner: m }),
   init: async () => {
-    const { status } = await Notifications.requestPermissionsAsync()
+    // Only check permission on init - do NOT request (browsers require user gesture for request)
+    const { status } = await Notifications.getPermissionsAsync()
     if (status !== 'granted') return
 
     let token
