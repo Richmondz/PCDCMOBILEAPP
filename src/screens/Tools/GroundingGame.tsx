@@ -58,7 +58,7 @@ export default function GroundingGame() {
             <PrimaryButton 
               title={isLast ? "Finish & Save" : "Next Step"} 
               onPress={next} 
-              style={{ backgroundColor: currentStep.color }}
+              color={currentStep.color}
             />
             {!isLast && (
               <TouchableOpacity style={styles.skipBtn} onPress={() => logToolUsage('grounding', 10)}>

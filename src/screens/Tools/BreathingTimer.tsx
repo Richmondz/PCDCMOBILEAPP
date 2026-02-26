@@ -77,7 +77,7 @@ export default function BreathingTimer() {
             {phase === 'idle' ? (
               <PrimaryButton title="Start Exercise" onPress={start} />
             ) : (
-              <PrimaryButton title="Stop" onPress={() => setPhase('idle')} style={{ backgroundColor: '#EF4444' }} />
+              <PrimaryButton title="Stop" onPress={() => setPhase('idle')} color="#EF4444" />
             )}
             {/* Removed save button as it auto-saves on completion */}
           </View>

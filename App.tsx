@@ -4,13 +4,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { StatusBar } from 'expo-status-bar'
 import { useColorScheme, Platform } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import { tokens } from './src/theme/tokens'
 import HomeScreen from './src/screens/home';
 import SpacesScreen from './src/screens/spaces';
 import ClipsScreen from './src/screens/clips';
 import InboxScreen from './src/screens/inbox';
 import ProfileScreen from './src/screens/profile';
 import { AuthGate } from './src/screens/auth/AuthGate';
-import { tokens } from './src/theme/tokens';
 import { useEffect, useState } from 'react';
 import { useNotifications } from './src/store/notifications';
 import Banner from './src/components/Banner';
@@ -29,6 +30,12 @@ import ChatScreen from './src/screens/inbox/Chat';
 import UploadClipScreen from './src/screens/clips/Upload';
 import ChannelsScreen from './src/screens/spaces/Channels';
 import ModerationQueueScreen from './src/screens/moderation/ModerationQueue';
+import ResourcesScreen from './src/screens/Resources';
+import HelpNowScreen from './src/screens/Resources/HelpNow';
+import WeeklyReportDetailScreen from './src/screens/Profile/WeeklyReportDetail';
+import BreathingTimerScreen from './src/screens/Tools/BreathingTimer';
+import GroundingGameScreen from './src/screens/Tools/GroundingGame';
+import ReframeCardScreen from './src/screens/Tools/ReframeCard';
 
 
 const Tab = createBottomTabNavigator()
@@ -83,6 +90,12 @@ export default function App() {
             <Stack.Screen name="UploadClip" component={UploadClipScreen} />
             <Stack.Screen name="Channels" component={ChannelsScreen} />
             <Stack.Screen name="ModerationQueue" component={ModerationQueueScreen} />
+            <Stack.Screen name="Resources" component={ResourcesScreen} />
+            <Stack.Screen name="HelpNow" component={HelpNowScreen} />
+            <Stack.Screen name="WeeklyReportDetail" component={WeeklyReportDetailScreen} />
+            <Stack.Screen name="BreathingTimer" component={BreathingTimerScreen} />
+            <Stack.Screen name="GroundingGame" component={GroundingGameScreen} />
+            <Stack.Screen name="ReframeCard" component={ReframeCardScreen} />
           </Stack.Navigator>
           <FloatingBackButton />
           {banner ? <Banner message={banner} /> : null}
@@ -94,12 +107,42 @@ export default function App() {
 
 function Tabs() {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Spaces" component={SpacesScreen} />
-      {/* <Tab.Screen name="Clips" component={ClipsScreen} /> */}
-      <Tab.Screen name="Inbox" component={InboxScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: tokens.colors.light.primary,
+        tabBarInactiveTintColor: tokens.colors.light.textTertiary,
+        tabBarStyle: {
+          backgroundColor: tokens.colors.light.surface,
+          borderTopColor: 'rgba(0,0,0,0.06)',
+          borderTopWidth: 1,
+          paddingTop: 8,
+          height: 64
+        },
+        tabBarLabelStyle: { fontWeight: '600', fontSize: 12 },
+        tabBarIconStyle: { marginBottom: -2 }
+      }}
+    >
+      <Tab.Screen 
+        name="Home" 
+        component={HomeScreen}
+        options={{ tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} /> }}
+      />
+      <Tab.Screen 
+        name="Spaces" 
+        component={SpacesScreen}
+        options={{ tabBarIcon: ({ color, size }) => <Ionicons name="people" size={size} color={color} /> }}
+      />
+      <Tab.Screen 
+        name="Inbox" 
+        component={InboxScreen}
+        options={{ tabBarIcon: ({ color, size }) => <Ionicons name="chatbubbles" size={size} color={color} /> }}
+      />
+      <Tab.Screen 
+        name="Profile" 
+        component={ProfileScreen}
+        options={{ tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} /> }}
+      />
     </Tab.Navigator>
   )
 }

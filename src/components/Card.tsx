@@ -1,8 +1,13 @@
-import { View, StyleSheet } from 'react-native'
+import { View, StyleSheet, ViewStyle } from 'react-native'
 import { tokens } from '../theme/tokens'
 
-export default function Card({ children }: { children: React.ReactNode }) {
-  return <View style={styles.card}>{children}</View>
+interface CardProps {
+  children: React.ReactNode
+  style?: ViewStyle
+}
+
+export default function Card({ children, style }: CardProps) {
+  return <View style={[styles.card, style]}>{children}</View>
 }
 
 const styles = StyleSheet.create({
@@ -10,10 +15,8 @@ const styles = StyleSheet.create({
     borderRadius: tokens.radii.card,
     padding: tokens.spacing.s16,
     backgroundColor: tokens.colors.light.surface,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.04)',
+    ...tokens.shadows.md
   }
 })
-

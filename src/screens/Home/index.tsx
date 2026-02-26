@@ -15,18 +15,22 @@ export default function Home() {
 
   const onRefresh = async () => {
     setRefreshing(true)
-    // Add reload logic here if needed
     setTimeout(() => setRefreshing(false), 1000)
   }
 
   return (
-    <LinearGradient colors={['#F9FAFB', '#F3F4F6']} style={styles.gradient}>
+    <LinearGradient 
+      colors={['#F8FAFC', '#F1F5F9', '#E2E8F0']} 
+      locations={[0, 0.5, 1]}
+      style={styles.gradient}
+    >
       <SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
         <AppHeader title="Daily Pulse" />
         
         <ScrollView 
           contentContainerStyle={styles.scroll}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          showsVerticalScrollIndicator={false}
         >
           <StreakBanner />
           <WeeklyRecap />
@@ -41,5 +45,5 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   gradient: { flex: 1 },
-  scroll: { padding: 16, paddingBottom: 40, gap: 16 }
+  scroll: { padding: 20, paddingBottom: 48, gap: 20 }
 })

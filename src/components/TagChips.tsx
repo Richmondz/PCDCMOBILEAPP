@@ -17,8 +17,18 @@ export default function TagChips({ value, onToggle }: { value: string[]; onToggl
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', flexWrap: 'wrap', gap: tokens.spacing.s8 },
-  chip: { backgroundColor: '#EEF2FF', borderRadius: 999, paddingVertical: 6, paddingHorizontal: 12 },
-  active: { backgroundColor: '#DBEAFE' },
-  txt: { fontSize: tokens.typography.caption }
+  chip: { 
+    backgroundColor: tokens.colors.light.surfaceHighlight, 
+    borderRadius: tokens.radii.full, 
+    paddingVertical: 8, 
+    paddingHorizontal: 14,
+    borderWidth: 2,
+    borderColor: 'transparent'
+  },
+  active: { 
+    backgroundColor: '#E0E7FF', 
+    borderColor: tokens.colors.light.primary 
+  },
+  txt: { fontSize: tokens.typography.caption, fontWeight: '600', color: tokens.colors.light.text }
 })
 

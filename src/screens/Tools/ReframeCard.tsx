@@ -69,7 +69,7 @@ export default function ReframeCard() {
                   title="Save to Daily Pulse" 
                   onPress={save} 
                   disabled={!thought || !reframe}
-                  style={{ backgroundColor: tokens.colors.light.accent }}
+                  color={tokens.colors.light.accent}
                 />
               </View>
             </View>
