@@ -17,16 +17,21 @@ export default function NewMessage() {
   const nav = useNavigation<any>()
 
   useEffect(() => {
-    if (q.length > 1) search()
+    if (q.trim().length > 0) search()
     else setUsers([])
   }, [q])
 
   async function search() {
+    const term = q.trim().replace(/[%_]/g, '')
+    if (!term) {
+      setUsers([])
+      return
+    }
     setLoading(true)
     const { data } = await supabase.from('profiles')
-      .select('id, nickname, role')
-      .ilike('nickname', `%${q}%`)
-      .limit(10)
+      .select('id, nickname, role, bio, hobbies, zodiac, mbti')
+      .or(`nickname.ilike.%${term}%,bio.ilike.%${term}%`)
+      .limit(15)
     setUsers(data || [])
     setLoading(false)
   }
@@ -59,13 +64,25 @@ export default function NewMessage() {
           keyExtractor={item => item.id}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.row} onPress={() => start(item.id, item.nickname, item.role)}>
+            <TouchableOpacity style={styles.row} onPress={() => start(item.id, item.nickname, item.role || 'teen')}>
               <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{item.nickname[0].toUpperCase()}</Text>
+                <Text style={styles.avatarText}>{item.nickname?.[0]?.toUpperCase() || '?'}</Text>
               </View>
               <View style={styles.info}>
-                <Text style={styles.name}>{item.nickname}</Text>
-                <Text style={styles.role}>{item.role}</Text>
+                <Text style={styles.name}>{item.nickname || 'Unknown'}</Text>
+                <View style={styles.metaRow}>
+                  <View style={styles.roleBadge}>
+                    <Text style={styles.roleText}>{item.role || 'teen'}</Text>
+                  </View>
+                  {[item.zodiac, item.mbti].filter(Boolean).map((t, i) => (
+                    <Text key={i} style={styles.tag}>{t}</Text>
+                  ))}
+                </View>
+                {item.bio ? (
+                  <Text style={styles.bio} numberOfLines={2}>{item.bio}</Text>
+                ) : item.hobbies?.length ? (
+                  <Text style={styles.bio} numberOfLines={2}>Hobbies: {item.hobbies.slice(0, 3).join(', ')}</Text>
+                ) : null}
               </View>
               <Ionicons name="chatbubble-outline" size={20} color={tokens.colors.light.primary} />
             </TouchableOpacity>
@@ -118,6 +135,11 @@ const styles = StyleSheet.create({
   info: { flex: 1 },
   name: { fontSize: 16, fontWeight: '600', color: '#111827' },
   role: { fontSize: 12, color: '#6B7280', textTransform: 'capitalize' },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4, flexWrap: 'wrap' },
+  roleBadge: { backgroundColor: '#E0E7FF', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 },
+  roleText: { fontSize: 10, fontWeight: '700', color: tokens.colors.light.primary, textTransform: 'uppercase' },
+  tag: { fontSize: 11, color: '#6B7280' },
+  bio: { fontSize: 12, color: '#6B7280', marginTop: 6, lineHeight: 16 },
   empty: { alignItems: 'center', marginTop: 32 },
   emptyText: { color: '#9CA3AF' }
 })

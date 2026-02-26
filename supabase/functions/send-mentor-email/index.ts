@@ -18,8 +18,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "Teen Club App <onboarding@resend.dev>",
-        to: ["ryang@chinatown-pcdc.org"],
-        cc: ["ost@chinatown-pcdc.org", "kwang@chinatown-pcdc.org"],
+        to: ["ryang@chinatown-pcdc.org", "ost@chinatown-pcdc.org"],
         subject: `[${urgency}] New Mentor Request from ${teenEmail}`,
         html: `
           <h2>New Ask a Mentor Request</h2>
