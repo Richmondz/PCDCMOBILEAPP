@@ -6,12 +6,12 @@ import { StatusBar } from 'expo-status-bar'
 import { useColorScheme, Platform } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { tokens } from './src/theme/tokens'
-import HomeScreen from './src/screens/home';
-import SpacesScreen from './src/screens/spaces';
-import ClipsScreen from './src/screens/clips';
-import InboxScreen from './src/screens/inbox';
-import ProfileScreen from './src/screens/profile';
-import { AuthGate } from './src/screens/auth/AuthGate';
+import HomeScreen from './src/screens/Home';
+import SpacesScreen from './src/screens/Spaces';
+import ClipsScreen from './src/screens/Clips';
+import InboxScreen from './src/screens/Inbox';
+import ProfileScreen from './src/screens/Profile';
+import { AuthGate } from './src/screens/Auth/AuthGate';
 import { useEffect, useState } from 'react';
 import { useNotifications } from './src/store/notifications';
 import Banner from './src/components/Banner';
@@ -22,14 +22,14 @@ import PresenceTracker from './src/modules/presence';
 import ActivityTracker from './src/components/ActivityTracker';
 import InstallPrompt from './src/components/pwa/InstallPrompt';
 import FloatingBackButton from './src/components/FloatingBackButton';
-import SettingsScreen from './src/screens/profile/Settings';
-import NotificationsScreen from './src/screens/profile/Notifications';
-import EditProfileScreen from './src/screens/profile/EditProfile';
-import WeeklyRecapScreen from './src/screens/recap/WeeklyRecap';
-import ChatScreen from './src/screens/inbox/Chat';
-import UploadClipScreen from './src/screens/clips/Upload';
-import ChannelsScreen from './src/screens/spaces/Channels';
-import ModerationQueueScreen from './src/screens/moderation/ModerationQueue';
+import SettingsScreen from './src/screens/Profile/Settings';
+import NotificationsScreen from './src/screens/Profile/Notifications';
+import EditProfileScreen from './src/screens/Profile/EditProfile';
+import WeeklyRecapScreen from './src/screens/Profile/WeeklyReportDetail';
+import ChatScreen from './src/screens/Inbox/Chat';
+import UploadClipScreen from './src/screens/Clips/Upload';
+import ChannelsScreen from './src/screens/Spaces/Channels';
+import ModerationQueueScreen from './src/screens/Moderation/ModerationQueue';
 import ResourcesScreen from './src/screens/Resources';
 import HelpNowScreen from './src/screens/Resources/HelpNow';
 import WeeklyReportDetailScreen from './src/screens/Profile/WeeklyReportDetail';
