@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native'
 import { supabase } from '../../lib/supabase'
 import { tokens } from '../../theme/tokens'
 import { useNavigation } from '@react-navigation/native'
+import AppHeader from '../../components/AppHeader'
 
 export default function Dashboard() {
   const nav = useNavigation<any>()
@@ -27,7 +28,9 @@ export default function Dashboard() {
   })() }, [])
   return (
     <View style={styles.wrap}>
-      <Text style={styles.title}>Staff Dashboard</Text>
+      <AppHeader title="Admin Dashboard" showBack />
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <Text style={styles.title}>Overview</Text>
       <View style={styles.grid}>
         <TouchableOpacity style={styles.card} onPress={() => nav.navigate('AdminRequests')}><Text>Pending Requests: {counts.reqs}</Text></TouchableOpacity>
         <TouchableOpacity style={styles.card} onPress={() => nav.navigate('EscalationInbox')}><Text>Open Escalations: {counts.escOpen}</Text><Text>High: {counts.escHigh}</Text></TouchableOpacity>
@@ -36,13 +39,15 @@ export default function Dashboard() {
         <TouchableOpacity style={styles.card} onPress={() => nav.navigate('AdminPrompts')}><Text>Prompt Today: {counts.promptToday ? 'Yes' : 'No'}</Text></TouchableOpacity>
         <TouchableOpacity style={styles.card} onPress={() => nav.navigate('AdminClips')}><Text>Clips Today: {counts.clipsToday}</Text></TouchableOpacity>
       </View>
+      </ScrollView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  wrap: { flex: 1, padding: tokens.spacing.s16, gap: tokens.spacing.s12 },
-  title: { fontSize: tokens.typography.header, fontWeight: '600' },
+  wrap: { flex: 1 },
+  scrollContent: { padding: tokens.spacing.s16, paddingBottom: 40 },
+  title: { fontSize: tokens.typography.header, fontWeight: '600', marginBottom: 12 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: tokens.spacing.s12 },
   card: { backgroundColor: tokens.colors.light.surface, borderRadius: tokens.radii.card, padding: tokens.spacing.s12, width: '48%' }
 })

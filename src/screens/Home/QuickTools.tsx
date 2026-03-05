@@ -12,6 +12,9 @@ export default function QuickTools() {
       <Card>
         <Text style={styles.sectionTitle}>Wellness Tools</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.row}>
+          <QuickToolChip label="Play" onPress={() => nav.navigate('Play')} />
+          <QuickToolChip label="Leaderboard" onPress={() => nav.navigate('Leaderboard')} />
+          <QuickToolChip label="Crossy Trivia" onPress={() => nav.navigate('PCDCRunner')} />
           <QuickToolChip label="Breathing" onPress={() => nav.navigate('BreathingTimer')} />
           <QuickToolChip label="Grounding" onPress={() => nav.navigate('GroundingGame')} />
           <QuickToolChip label="Reframe" onPress={() => nav.navigate('ReframeCard')} />

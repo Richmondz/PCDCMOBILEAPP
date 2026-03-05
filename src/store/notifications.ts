@@ -34,7 +34,7 @@ export const useNotifications = create<NotificationState>((set) => ({
     const { data: { user } } = await supabase.auth.getUser()
     if (user && token) {
       // Upsert token to avoid duplicates or errors
-      await supabase.from('device_tokens').upsert({ user_id: user.id, token }, { onConflict: 'token' })
+      await supabase.from('device_tokens').upsert({ user_id: user.id, token }, { onConflict: ['user_id', 'token'] })
     }
 
     // ... subscriptions ...

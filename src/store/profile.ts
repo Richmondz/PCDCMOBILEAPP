@@ -3,8 +3,9 @@ import { supabase } from '../lib/supabase'
 
 export type Profile = {
   id: string
-  role: 'teen' | 'mentor' | 'staff'
+  role: 'teen' | 'mentor' | 'staff' | 'admin'
   nickname: string
+  avatar_url?: string
   grade?: string
   tags?: string[]
   language_pref?: string
@@ -25,9 +26,17 @@ export const useProfile = create<ProfileState>((set) => ({
   profile: null,
   setProfile: (p) => set({ profile: p }),
   loadProfile: async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return set({ profile: null })
-    const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
-    set({ profile: (data as Profile) || null })
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser()
+      if (authError?.message?.includes('Refresh Token')) {
+        await supabase.auth.signOut()
+        return set({ profile: null })
+      }
+      if (!user) return set({ profile: null })
+      const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+      set({ profile: (data as Profile) || null })
+    } catch (e) {
+      set({ profile: null })
+    }
   }
 }))

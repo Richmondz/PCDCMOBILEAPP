@@ -12,8 +12,18 @@ export const useAuth = create<SessionState>((set) => ({
 }))
 
 export async function initAuth(onChange: (s: any | null) => void) {
-  const { data: { session } } = await supabase.auth.getSession()
-  onChange(session)
+  try {
+    const { data: { session }, error } = await supabase.auth.getSession()
+    if (error?.message?.includes('Refresh Token')) {
+      await supabase.auth.signOut()
+      onChange(null)
+    } else {
+      onChange(session)
+    }
+  } catch (e) {
+    await supabase.auth.signOut().catch(() => {})
+    onChange(null)
+  }
   supabase.auth.onAuthStateChange((_event, s) => onChange(s))
 }
 

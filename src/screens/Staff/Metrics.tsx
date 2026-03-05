@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { supabase } from '../../lib/supabase'
 import { tokens } from '../../theme/tokens'
+import AppHeader from '../../components/AppHeader'
 
 function unique<T>(arr: T[]) { return Array.from(new Set(arr)) }
 
@@ -50,7 +51,8 @@ export default function Metrics() {
   })() }, [])
   return (
     <View style={styles.wrap}>
-      <Text style={styles.title}>Staff Metrics</Text>
+      <AppHeader title="Staff Metrics" showBack />
+      <Text style={styles.title}>Engagement & Response</Text>
       <Text>DAU: {data.dau}</Text>
       <Text>WAU: {data.wau}</Text>
       <Text>Check-in completion: {data.checkinPct}%</Text>

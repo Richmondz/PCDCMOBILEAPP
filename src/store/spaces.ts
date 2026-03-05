@@ -99,22 +99,19 @@ export const useSpaces = create<SpacesState>((set, get) => ({
   },
   loadPosts: async (channelId) => {
     const pageSize = 20
-    let { data } = await supabase.from('channel_posts').select('*').eq('channel_id', channelId).order('created_at', { ascending: false }).range(0, pageSize - 1)
+    let { data, error } = await supabase.from('channel_posts').select('*').eq('channel_id', channelId).is('deleted_at', null).order('created_at', { ascending: false }).range(0, pageSize - 1)
     let posts = (data as any[]) || []
-    if (!posts.length) {
+    if (!posts.length && error) {
       try {
         if (Offline.cacheGet) {
           const cached = await Offline.cacheGet<any[]>(`posts:${channelId}`)
           if (cached) posts = cached
         }
       } catch (e) { console.error('Cache get error', e) }
-    } else {
-      try {
-        if (Offline.cacheSet) {
-          await Offline.cacheSet(`posts:${channelId}`, posts)
-        }
-      } catch (e) { console.error('Cache set error', e) }
     }
+    try {
+      if (Offline.cacheSet) await Offline.cacheSet(`posts:${channelId}`, posts)
+    } catch (e) { console.error('Cache set error', e) }
     const authorIds = Array.from(new Set(posts.map((p: any) => p.author_id)))
     if (authorIds.length) {
       const { data: profs } = await supabase.from('profiles').select('id,nickname').in('id', authorIds)
@@ -139,7 +136,7 @@ export const useSpaces = create<SpacesState>((set, get) => ({
     const page = (get().postPages[channelId] || 1)
     const start = page * pageSize
     const end = start + pageSize - 1
-    const { data } = await supabase.from('channel_posts').select('*').eq('channel_id', channelId).order('created_at', { ascending: false }).range(start, end)
+    const { data } = await supabase.from('channel_posts').select('*').eq('channel_id', channelId).is('deleted_at', null).order('created_at', { ascending: false }).range(start, end)
     const more = (data as any[]) || []
     if (more.length) set(s => ({ posts: { ...s.posts, [channelId]: [ ...(s.posts[channelId] || []), ...more ] }, postPages: { ...s.postPages, [channelId]: page + 1 } }))
   },
@@ -246,8 +243,12 @@ export const useSpaces = create<SpacesState>((set, get) => ({
     return (now - last) > ONE_MINUTE
   },
   deletePost: async (postId) => {
-    await supabase.from('channel_posts').delete().eq('id', postId)
-    // Update local state to remove it
+    const { error } = await supabase.from('channel_posts').delete().eq('id', postId)
+    if (error) {
+      console.error('Delete post error:', error)
+      Alert.alert('Error', 'Could not delete post. You may only delete your own posts.')
+      return
+    }
     set(s => {
       const newPosts = { ...s.posts }
       for (const key in newPosts) {

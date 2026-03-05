@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { View, Text, StyleSheet, ScrollView, Alert, TouchableOpacity, Image } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import * as ImagePicker from 'expo-image-picker'
@@ -19,6 +20,7 @@ export default function Onboarding() {
   const [mbti, setMbti] = useState('')
   const [bio, setBio] = useState('')
   const [avatar, setAvatar] = useState<string | null>(null)
+  const [avatarBase64, setAvatarBase64] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
   async function pickImage() {
@@ -27,29 +29,45 @@ export default function Onboarding() {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.5,
+      base64: true,
     })
 
     if (!result.canceled) {
-      setAvatar(result.assets[0].uri)
+      const asset = result.assets[0]
+      setAvatar(asset.uri)
+      if (asset.base64) {
+        setAvatarBase64(asset.base64)
+      }
     }
   }
 
-  async function uploadAvatar(uri: string): Promise<string | null> {
+  async function uploadAvatar(uri: string, base64Data?: string | null): Promise<string | null> {
     try {
-      const base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' });
-      const ext = uri.split('.').pop();
-      const path = `${profile?.id}/avatar.${ext}`;
-      const contentType = `image/${ext}`;
+      let base64 = base64Data
+      let contentType = 'image/jpeg'
+      if (!base64) {
+        try {
+          base64 = await FileSystem.readAsStringAsync(uri, { encoding: 'base64' })
+        } catch {
+          Alert.alert('Upload failed', 'Could not read image. Try a different photo.')
+          return null
+        }
+      }
+      const ext = (uri.split('.').pop() || 'jpg').split('?')[0]
+      if (ext && ['png', 'gif', 'webp'].includes(ext.toLowerCase())) {
+        contentType = `image/${ext.toLowerCase()}`
+      }
+      const path = `${profile?.id}/avatar.${ext || 'jpg'}`
 
-      const { error } = await supabase.storage.from('avatars').upload(path, decode(base64), { contentType, upsert: true });
-      if (error) throw error;
+      const { error } = await supabase.storage.from('avatars').upload(path, decode(base64), { contentType, upsert: true })
+      if (error) throw error
 
-      const { data } = supabase.storage.from('avatars').getPublicUrl(path);
-      return data.publicUrl;
+      const { data } = supabase.storage.from('avatars').getPublicUrl(path)
+      return data.publicUrl
     } catch (e: any) {
-      console.log('Upload error', e);
-      Alert.alert('Upload failed', e.message);
-      return null;
+      console.log('Upload error', e)
+      Alert.alert('Upload failed', e.message || 'Please try again.')
+      return null
     }
   }
 
@@ -60,7 +78,7 @@ export default function Onboarding() {
     let avatarUrl = null
     
     if (avatar) {
-      avatarUrl = await uploadAvatar(avatar)
+      avatarUrl = await uploadAvatar(avatar, avatarBase64)
     }
 
     const updates: any = {

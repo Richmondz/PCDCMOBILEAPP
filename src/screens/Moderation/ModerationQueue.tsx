@@ -16,7 +16,7 @@ export default function ModerationQueue() {
   const [refreshing, setRefreshing] = useState(false)
 
   const loadReports = async () => {
-    if (profile?.role !== 'staff') return
+    if (!profile || !['staff', 'mentor', 'admin'].includes(profile.role)) return
     const { data } = await supabase.from('reports').select('*').order('created_at', { ascending: false })
     setReports((data as any[]) || [])
   }

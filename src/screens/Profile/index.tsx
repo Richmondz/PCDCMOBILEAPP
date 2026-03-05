@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Platform } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import AppHeader from '../../components/AppHeader'
@@ -9,7 +9,8 @@ import { supabase } from '../../lib/supabase'
 import SavedTools from './SavedTools'
 import { useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
-import * as Notifications from 'expo-notifications';
+import * as Notifications from 'expo-notifications'
+import Constants from 'expo-constants'
 import { useEffect, useState } from 'react'
 
 export default function Profile({ route }: any) {
@@ -41,25 +42,42 @@ export default function Profile({ route }: any) {
   }
 
   async function registerForPushNotificationsAsync() {
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Notification permission denied. You can enable it in your device settings.');
+    // Web: Expo push requires vapidPublicKey in app.json; native push works on iOS/Android
+    if (Platform.OS === 'web') {
+      alert('Push notifications work best in the mobile app (iOS/Android). On web, enable notifications in your browser settings for this site.');
       return;
     }
+    const { status: existingStatus } = await Notifications.getPermissionsAsync()
+    let finalStatus = existingStatus
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync()
+      finalStatus = status
+    }
+    if (finalStatus !== 'granted') {
+      alert('Notification permission denied. You can enable it in your device settings.')
+      return
+    }
     try {
-      const token = (await Notifications.getExpoPushTokenAsync()).data;
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user && token) {
-        await supabase.from('device_tokens').upsert({ user_id: user.id, token }, { onConflict: 'token' });
-        alert('Notifications enabled!');
+      const projId = Constants?.expoConfig?.extra?.eas?.projectId
+      const token = (await Notifications.getExpoPushTokenAsync({ projectId: projId })).data
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        alert('Please sign in to enable notifications.')
+        return
       }
-    } catch (e) {
-      alert('Failed to register for push notifications. Please try again.');
+      if (!token) {
+        alert('Could not get push token. Try again or use the Expo Go app.')
+        return
+      }
+      const { error } = await supabase.from('device_tokens').upsert(
+        { user_id: user.id, token },
+        { onConflict: ['user_id', 'token'] }
+      )
+      if (error) throw error
+      alert('Notifications enabled!')
+    } catch (e: any) {
+      const msg = e?.message || String(e)
+      alert(`Failed to register for push notifications: ${msg}. Try again or use the Expo Go app.`)
     }
   }
 
@@ -167,10 +185,11 @@ export default function Profile({ route }: any) {
                 />
               </Section>
     
-              {profile?.role === 'staff' && (
-                <Section title="Staff Area">
-                  <MenuLink title="Moderation Queue" icon="shield-checkmark-outline" onPress={() => nav.navigate('ModerationQueue')} />
+              {(profile?.role === 'staff' || profile?.role === 'mentor' || profile?.role === 'admin') && (
+                <Section title="Admin Dashboard">
+                  <MenuLink title="Admin Dashboard" icon="stats-chart-outline" onPress={() => nav.navigate('StaffDashboard')} />
                   <MenuLink title="Admin Tools" icon="construct-outline" onPress={() => nav.navigate('Admin')} />
+                  <MenuLink title="Moderation Queue" icon="shield-checkmark-outline" onPress={() => nav.navigate('ModerationQueue')} />
                 </Section>
               )}
     

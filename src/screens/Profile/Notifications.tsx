@@ -9,6 +9,8 @@ import { useProfile } from '../../store/profile'
 import { PrimaryButton } from '../../components/Buttons'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { Ionicons } from '@expo/vector-icons'
+import * as ExpoNotifications from 'expo-notifications'
+import Constants from 'expo-constants'
 
 export default function Notifications() {
   const { profile } = useProfile()
@@ -38,18 +40,53 @@ export default function Notifications() {
     } 
   }, [profile])
 
-  async function save() {
+async function save() {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+  
+  const fmt = (d: Date) => d.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
+  
+  await supabase.from('profiles').update({ 
+    push_enabled: enabled, 
+    quiet_hours_start: fmt(start), 
+    quiet_hours_end: fmt(end) 
+  }).eq('id', user.id)
+}
+
+async function registerForPush() {
+  if (Platform.OS === 'web') {
+    alert('Push notifications work best in the mobile app (iOS/Android). On web, enable notifications in your browser settings for this site.')
+    return
+  }
+  const { status: existingStatus } = await ExpoNotifications.getPermissionsAsync()
+  let finalStatus = existingStatus
+  if (existingStatus !== 'granted') {
+    const { status } = await ExpoNotifications.requestPermissionsAsync()
+    finalStatus = status
+  }
+  if (finalStatus !== 'granted') {
+    alert('Notification permission denied. Please enable it in your device settings.')
+    return
+  }
+  try {
+    const projId = Constants?.expoConfig?.extra?.eas?.projectId
+    const token = (await ExpoNotifications.getExpoPushTokenAsync({ projectId: projId })).data
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
-    
-    const fmt = (d: Date) => d.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' })
-    
-    await supabase.from('profiles').update({ 
-      push_enabled: enabled, 
-      quiet_hours_start: fmt(start), 
-      quiet_hours_end: fmt(end) 
-    }).eq('id', user.id)
+    if (!token) {
+      alert('Could not get push token. Try again or use the Expo Go app.')
+      return
+    }
+    const { error } = await supabase.from('device_tokens').upsert(
+      { user_id: user.id, token },
+      { onConflict: ['user_id', 'token'] }
+    )
+    if (error) throw error
+    alert('Notifications enabled!')
+  } catch (e: any) {
+    alert(`Failed to register: ${e?.message || String(e)}. Try again or use the Expo Go app.`)
   }
+}
 
   const TimeRow = ({ label, date, onPress }: any) => (
     <TouchableOpacity style={styles.timeRow} onPress={onPress}>
@@ -80,6 +117,12 @@ export default function Notifications() {
                 trackColor={{ false: '#E5E7EB', true: tokens.colors.light.primary }}
               />
             </View>
+            {Platform.OS !== 'web' && (
+              <TouchableOpacity style={styles.registerBtn} onPress={registerForPush}>
+                <Ionicons name="notifications-outline" size={18} color={tokens.colors.light.primary} />
+                <Text style={styles.registerBtnText}>Register for push (retry if failed)</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           <View style={styles.card}>
@@ -150,6 +193,17 @@ const styles = StyleSheet.create({
   
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   labelGroup: { flex: 1, paddingRight: 16 },
+  registerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    backgroundColor: 'rgba(99, 102, 241, 0.08)',
+    borderRadius: 10
+  },
+  registerBtnText: { fontSize: 14, fontWeight: '600', color: tokens.colors.light.primary },
   label: { fontSize: 16, fontWeight: '700', color: '#111827' },
   desc: { fontSize: 14, color: '#6B7280', marginTop: 2 },
 

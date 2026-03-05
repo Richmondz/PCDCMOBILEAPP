@@ -7,10 +7,13 @@ import { useColorScheme, Platform } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { tokens } from './src/theme/tokens'
 import HomeScreen from './src/screens/Home';
+import PlayScreen from './src/screens/Play';
 import SpacesScreen from './src/screens/Spaces';
 import ClipsScreen from './src/screens/Clips';
 import InboxScreen from './src/screens/Inbox';
 import ProfileScreen from './src/screens/Profile';
+import LeaderboardScreen from './src/screens/Play/Leaderboard';
+import PCDCRunnerScreen from './src/screens/Play/PCDCRunner';
 import { AuthGate } from './src/screens/Auth/AuthGate';
 import { useEffect, useState } from 'react';
 import { useNotifications } from './src/store/notifications';
@@ -40,6 +43,20 @@ import AskMentorFormScreen from './src/screens/Inbox/AskMentorForm';
 import NewMessageScreen from './src/screens/Inbox/NewMessage';
 import EscalateFormScreen from './src/screens/Staff/EscalateForm';
 import AdminScreen from './src/screens/Admin';
+import StaffDashboardScreen from './src/screens/Staff/Dashboard';
+import StaffMetricsScreen from './src/screens/Staff/Metrics';
+import EscalationInboxScreen from './src/screens/Staff/EscalationInbox';
+import PresenceReportScreen from './src/screens/Admin/PresenceReport';
+import AdminCohortsScreen from './src/screens/Admin/Cohorts';
+import AdminPromptsScreen from './src/screens/Admin/Prompts';
+import AdminReportsScreen from './src/screens/Admin/Reports';
+import AdminRequestsScreen from './src/screens/Admin/Requests';
+import AdminMentorsScreen from './src/screens/Admin/Mentors';
+import AdminClipsScreen from './src/screens/Admin/Clips';
+import DataExportScreen from './src/screens/Admin/DataExport';
+import CohortMembersScreen from './src/screens/Admin/CohortMembers';
+import ManageSlotsScreen from './src/screens/Office/ManageSlots';
+import OfficeApprovalsScreen from './src/screens/Office/Approvals';
 
 
 const Tab = createBottomTabNavigator()
@@ -87,6 +104,20 @@ export default function App() {
             <Stack.Screen name="NewMessage" component={NewMessageScreen} />
             <Stack.Screen name="EscalateForm" component={EscalateFormScreen} />
             <Stack.Screen name="Admin" component={AdminScreen} />
+            <Stack.Screen name="StaffDashboard" component={StaffDashboardScreen} />
+            <Stack.Screen name="StaffMetrics" component={StaffMetricsScreen} />
+            <Stack.Screen name="EscalationInbox" component={EscalationInboxScreen} />
+            <Stack.Screen name="PresenceReport" component={PresenceReportScreen} />
+            <Stack.Screen name="AdminCohorts" component={AdminCohortsScreen} />
+            <Stack.Screen name="AdminPrompts" component={AdminPromptsScreen} />
+            <Stack.Screen name="AdminReports" component={AdminReportsScreen} />
+            <Stack.Screen name="AdminRequests" component={AdminRequestsScreen} />
+            <Stack.Screen name="AdminMentors" component={AdminMentorsScreen} />
+            <Stack.Screen name="AdminClips" component={AdminClipsScreen} />
+            <Stack.Screen name="DataExport" component={DataExportScreen} />
+            <Stack.Screen name="CohortMembers" component={CohortMembersScreen} />
+            <Stack.Screen name="ManageSlots" component={ManageSlotsScreen} />
+            <Stack.Screen name="OfficeApprovals" component={OfficeApprovalsScreen} />
             <Stack.Screen name="UploadClip" component={UploadClipScreen} />
             <Stack.Screen name="Channels" component={ChannelsScreen} />
             <Stack.Screen name="ModerationQueue" component={ModerationQueueScreen} />
@@ -96,6 +127,9 @@ export default function App() {
             <Stack.Screen name="BreathingTimer" component={BreathingTimerScreen} />
             <Stack.Screen name="GroundingGame" component={GroundingGameScreen} />
             <Stack.Screen name="ReframeCard" component={ReframeCardScreen} />
+            <Stack.Screen name="Play" component={PlayScreen} />
+            <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
+            <Stack.Screen name="PCDCRunner" component={PCDCRunnerScreen} />
           </Stack.Navigator>
           <FloatingBackButton />
           {banner ? <Banner message={banner} /> : null}
@@ -127,6 +161,14 @@ function Tabs() {
         name="Home" 
         component={HomeScreen}
         options={{ tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} /> }}
+      />
+      <Tab.Screen 
+        name="Play" 
+        component={PlayScreen}
+        options={{ 
+          tabBarLabel: 'Play',
+          tabBarIcon: ({ color, size }) => <Ionicons name="game-controller" size={size} color={color} />
+        }}
       />
       <Tab.Screen 
         name="Spaces" 

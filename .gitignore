@@ -13,3 +13,6 @@ yarn-error.log
 *.key
 *.mobileprovision
 *.orig.*
+
+.vercel
+.env*.local

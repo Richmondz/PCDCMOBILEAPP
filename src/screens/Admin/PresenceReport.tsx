@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import { supabase } from '../../lib/supabase'
 import { tokens } from '../../theme/tokens'
 import { useProfile } from '../../store/profile'
+import AppHeader from '../../components/AppHeader'
 
 type Row = { user_id: string; nickname: string; role: 'teen'|'mentor'|'staff'; total_seconds: number }
 
@@ -15,7 +16,7 @@ export default function PresenceReport() {
 
   useEffect(() => {
     ;(async () => {
-      if (!profile || profile.role !== 'staff') { nav.goBack(); return }
+      if (!profile || !['staff', 'mentor', 'admin'].includes(profile.role)) { nav.goBack(); return }
       setLoading(true)
       const { data } = await supabase.rpc('weekly_presence_totals', { tz: 'America/New_York' })
       setRows((data as Row[]) || [])
@@ -25,7 +26,8 @@ export default function PresenceReport() {
 
   return (
     <View style={styles.wrap}>
-      <Text style={styles.title}>Weekly Presence (last week)</Text>
+      <AppHeader title="Weekly Time on App" showBack />
+      <Text style={styles.title}>Last week (total time per user)</Text>
       {loading ? <Text>Loading…</Text> : (
         <FlatList
           data={rows.sort((a,b)=>b.total_seconds-a.total_seconds)}

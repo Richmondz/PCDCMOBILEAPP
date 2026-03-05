@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import AppHeader from '../../components/AppHeader'
 import { tokens } from '../../theme/tokens'
 import DailyPulse from './DailyPulse'
+import PlayPromo from './PlayPromo'
 import TodaysPrompt from './TodaysPrompt'
 import QuickTools from './QuickTools'
 import StreakBanner from './StreakBanner'
@@ -33,6 +34,7 @@ export default function Home() {
           showsVerticalScrollIndicator={false}
         >
           <StreakBanner />
+          <PlayPromo />
           <WeeklyRecap />
           <DailyPulse />
           <TodaysPrompt />
