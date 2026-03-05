@@ -30,7 +30,7 @@ export default function Metrics() {
     const promptPct = prompt && prompt.length ? Math.round(((posts||[]).filter((p:any)=>p.created_at.startsWith(today)).length / ((teens||[]).length || 1)) * 100) : 0
 
     const { data: profs } = await supabase.from('profiles').select('id,role')
-    const mentorIds = new Set((profs||[]).filter((p:any)=>p.role==='mentor'||p.role==='staff').map((p:any)=>p.id))
+    const mentorIds = new Set((profs||[]).filter((p:any)=>['mentor','staff','admin'].includes(p.role)).map((p:any)=>p.id))
     const mentorMsgRate = Math.round(((msgsWeek||[]).filter((m:any)=>mentorIds.has(m.sender_id)).length / (((msgsWeek||[]).length)||1)) * 100)
 
     const { data: esc } = await supabase.from('escalations').select('id,created_at,status')

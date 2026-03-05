@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { AppState } from 'react-native'
+import { AppState, Platform } from 'react-native'
 import { supabase } from '../lib/supabase'
 
 export default function PresenceTracker() {
@@ -9,6 +9,16 @@ export default function PresenceTracker() {
 
   useEffect(() => {
     let mounted = true
+
+    // Web: end session when tab closes or page hides (helps populate presence_sessions)
+    const endSession = () => {
+      const id = sessionIdRef.current
+      if (id) supabase.from('presence_sessions').update({ ended_at: new Date().toISOString() }).eq('id', id)
+    }
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      window.addEventListener('pagehide', endSession)
+      window.addEventListener('beforeunload', endSession)
+    }
     ;(async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user || !mounted) return
@@ -47,6 +57,10 @@ export default function PresenceTracker() {
 
     return () => {
       mounted = false
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        window.removeEventListener('pagehide', endSession)
+        window.removeEventListener('beforeunload', endSession)
+      }
       const id = sessionIdRef.current
       if (id) supabase.from('presence_sessions').update({ ended_at: new Date().toISOString() }).eq('id', id)
       if (heartbeatRef.current) { clearInterval(heartbeatRef.current as any); heartbeatRef.current = null }
